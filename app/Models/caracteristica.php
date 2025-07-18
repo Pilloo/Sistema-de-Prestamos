@@ -13,5 +13,9 @@ class Caracteristica extends Model
         return $this->hasOne(Seccion::class);
     }
 
+    public function marca(){
+        return $this->hasOne(Seccion::class);
+    }
+
     protected $fillable = ['nombre','estado'];
 }

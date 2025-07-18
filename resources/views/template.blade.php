@@ -24,6 +24,12 @@
     @stack('css')
 </head>
 <body>
-    <x-navigation-header />
+    <x-navigation-menu />
+
+    <main class="p-4">
+        @yield('content')
+    </main>
+
+    <x-footer />
 </body>
 </html>

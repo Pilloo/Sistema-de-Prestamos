@@ -1,0 +1,88 @@
+
+  .sidebar:hover {
+    width: 300px;
+  }
+
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .sidebar a:hover {
+    background-color: rgb(62, 67, 72);
+  }
+
+  .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 130px;
+      background-color: #505050;
+      transition: width 0.3s;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+  }
+
+
+  .sidebar .TextoNav {
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    padding-left: 20px;
+  }
+  
+
+  .sidebar:hover .TextoNav {
+    opacity: 1;
+  }
+
+  .contenido {
+    margin-left: 140px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+  }
+
+  .sidebar:hover .contenido {
+    margin-left: 310px;
+  }
+  
+  .img_tamano {
+    font-size: 2rem;
+  }
+  
+
+  .sidebar i {
+    padding-left: 20px;
+    font-size: 2rem; 
+    min-width: 30px;
+  }
+
+  .logo{
+    width: 90px !important;
+  }
+  .texto{
+    margin-bottom: 10px !important;
+  }
+
+  .footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background-color: #505050;
+  color: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 1.5rem;
+}
