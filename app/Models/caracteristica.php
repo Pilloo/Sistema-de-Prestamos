@@ -10,11 +10,11 @@ class Caracteristica extends Model
     use HasFactory;
 
     public function categoria(){
-        return $this->hasOne(Seccion::class);
+        return $this->belongsTo(Categoria::class);
     }
 
     public function marca(){
-        return $this->hasOne(Seccion::class);
+        return $this->belongsTo(Marca::class);
     }
 
     protected $fillable = ['nombre','estado'];
