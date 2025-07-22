@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('solicitud_prestamos', function (Blueprint $table) {
             $table->id();
-            $table->integer('idCaracteristica')->unique()->constrained('caracteristicas')->onDelete('cascade');
+            $table->string('detalle',255);
+            $table->timestamps();
         });
     }
 
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('solicitud_prestamos');
     }
 };
