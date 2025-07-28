@@ -1,0 +1,23 @@
+.bodyScanner {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#reader {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#result {
+    margin-top: 10px;
+    background-color: #e6f7e6;
+    color: #267326;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    word-break: break-word;
+}

@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('marcas', function (Blueprint $table) {
+        Schema::create('estado_equipos', function (Blueprint $table) {
             $table->id();
-            $table->integer('caracteristica_id')->unique()->constrained('caracteristicas')->onDelete('cascade');
+            $table->string('nombre',60)->unique();
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('marcas');
+        Schema::dropIfExists('estado_equipos');
     }
 };

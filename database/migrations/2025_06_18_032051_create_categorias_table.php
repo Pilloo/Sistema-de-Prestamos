@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
-            $table->integer('idCaracteristica')->unique()->constrained('caracteristicas')->onDelete('cascade');
+            $table->integer('caracteristica_id')->unique()->constrained('caracteristicas')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

@@ -13,5 +13,9 @@ class Marca extends Model
         return $this->belongsTo(Caracteristica::class);
     }
 
-    protected $fillable = ['idCaracteristica'];
+    public function equipos(){
+        return $this->hasMany(Equipo::class);
+    }
+
+    protected $fillable = ['caracteristica_id'];
 }
