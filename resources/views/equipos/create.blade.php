@@ -91,9 +91,6 @@
           @enderror
       </div>
 
-
-
-
         <div class="col-md-6">
             <label for="marca_id" class="form-label">Marca:</label>
             <select data-size="4" title="Seleccione una marca" data-live-search="true" name="marca_id" id="marca_id" class="form-control selectpicker show-tick">
@@ -120,24 +117,18 @@
 
         <div class="d-flex gap-2">
           <button type="button" class="btn btn-secondary">Volver</button>
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal">Escanear Código QR</button>
+          <button type="button" class="btn" onclick="openModal()">Escanear Código QR</button>
 
           <button type="submit" class="btn btn-primary">Confirmar</button>
         </div>
 
         <!-- Modal Scanner Bootstrap -->
-        <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+        <div id="qrModal" class="modal">
             <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="qrModalLabel">Escanear QR</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" onclick="stopScanner()"></button>
-                </div>
-                <div class="modal-body">
-                <div id="reader" style="width: 100%; height: 300px;"></div>
-                <div id="result">Resultado: <em>Esperando escaneo...</em></div>
-                </div>
-            </div>
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Escanear QR</h3>
+            <div id="reader"></div>
+            <div id="result">Resultado: <em>Esperando escaneo...</em></div>
             </div>
         </div>
     </form>
@@ -146,60 +137,9 @@
 @endsection
 
 @push('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-<script>
-    let html5QrCode;
-    let scannerRunning = false;
+<script src="{{ asset('js/scanner.js') }}"></script>
 
-    function startScanner() {
-        if (scannerRunning) return;
-
-        html5QrCode = new Html5Qrcode("reader");
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-        html5QrCode.start(
-            { facingMode: "environment" },
-            config,
-            qrCodeMessage => {
-                document.getElementById("result").innerHTML = "Resultado: " + qrCodeMessage;
-                document.getElementById("contenido_etiqueta").value = qrCodeMessage;
-                stopScanner();
-                const modal = bootstrap.Modal.getInstance(document.getElementById('qrModal'));
-                modal.hide();
-            },
-            errorMessage => {
-                // Silenciar errores de escaneo
-            }
-        ).then(() => {
-            scannerRunning = true;
-        }).catch(err => {
-            console.error("No se pudo iniciar:", err);
-        });
-    }
-
-    function stopScanner() {
-        if (!scannerRunning || !html5QrCode) return;
-
-        html5QrCode.stop().then(() => {
-            html5QrCode.clear();
-            scannerRunning = false;
-        }).catch(err => {
-            console.error("No se pudo detener:", err);
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const qrModal = document.getElementById('qrModal');
-
-        qrModal.addEventListener('shown.bs.modal', function () {
-            setTimeout(startScanner, 300);
-        });
-
-        qrModal.addEventListener('hidden.bs.modal', function () {
-            stopScanner();
-        });
-    });
-</script>
 @endpush
-
