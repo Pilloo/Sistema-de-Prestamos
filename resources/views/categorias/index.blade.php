@@ -13,7 +13,27 @@
 @section('content')
 
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+<script>
+// Para recuperar el mensaje que quiero que muestre el TOAST
+let message = "{{ session('success') }}";
+
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: message // ← CORRECTO (sin punto y coma)
+});
+</script>
 @endif
 @if(session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>
@@ -30,9 +50,9 @@
             <input id="placeholderCategorias" type="text" class="form-control" id="buscador" placeholder="Buscar categoría...">
         </div>
 
-        <div id="contenedorTablaCategorias" class="table-container">
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
+        <div id="contenedorTablaCategorias">
+            <table id="datatablesSimple" class="table table-striped">
+                <thead>
                     <tr>
                     <th>#</th>
                     <th>Categoría</th>
@@ -104,6 +124,9 @@
 @endsection
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
+<script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endpush

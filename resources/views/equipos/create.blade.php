@@ -117,8 +117,8 @@
 
         <div class="d-flex gap-2">
           <button type="button" class="btn btn-secondary">Volver</button>
-          <button type="button" class="btn" onclick="openModal()">Escanear con camara</button>
-          <button type="button" class="btn" onclick="openBarcodeModal()">Escanear con lector</button>
+          <button type="button" class="btn btn-primary" onclick="openModal()">Escanear con camara</button>
+          <button type="button" class="btn btn-primary" onclick="openBarcodeModal()">Escanear con lector</button>
           <button type="submit" class="btn btn-primary">Confirmar</button>
         </div>
 

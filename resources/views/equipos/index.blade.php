@@ -7,13 +7,33 @@
 <link href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<link rel="stylesheet" href="{{ asset('css/scannerLector.css') }}">
 @endpush
 
 @section('content')
 
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+<script>
+// Para recuperar el mensaje que quiero que muestre el TOAST
+let message = "{{ session('success') }}";
+
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: message // ← CORRECTO (sin punto y coma)
+});
+</script>
 @endif
 @if(session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>
@@ -23,23 +43,28 @@
     <div id="contenedorEquipos" class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Listado de Equipos</h2>
-            <a href="{{ route('equipos.create') }}">
-                <button type="button" class="btn btn-primary">Añadir nuevo registro</button>
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('equipos.create') }}">
+                    <button type="button" class="btn btn-primary">Añadir nuevo registro</button>
+                </a>
+                <button type="button" class="btn btn-primary" onclick="openBarcodeModal()">Búsqueda con lector</button>
+            </div>
         </div>
+
 
         <div class="mb-3">
             <input id="placeholderEquipos" type="text" class="form-control" id="buscador" placeholder="Buscar equipo...">
         </div>
 
-        <div id="contenedorTablaEquipos" class="table-container">
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
+        <div id="contenedorTablaEquipos">
+            <table id="datatablesSimple" class="table table-striped">
+                <thead>
                     <tr>
                     <th>#</th>
                     <th>Equipo</th>
                     <th>Marca</th>
                     <th>Categoría</th>
+                    <th>Codigo</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                     </tr>
@@ -60,6 +85,9 @@
                                     </div>
                                 </div>
                             @endforeach
+                        </td>
+                        <td>
+                            {{ $item->contenido_etiqueta ? $item->contenido_etiqueta : 'Sin codigo' }}
                         </td>
                         <td>
                             {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}
@@ -139,6 +167,14 @@
                         </div>
                     </div>
 
+                    <!-- Modal para escáner físico -->
+                    <div id="barcodeModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeBarcodeModal()">&times;</span>
+                            <h3>Escanear con lector de código</h3>
+                            <input type="text" id="barcodeInput" class="form-control" placeholder="Escanee el código aquí">
+                        </div>
+                    </div>
 
                     @endforeach
                 </tbody>
@@ -150,6 +186,10 @@
 @endsection
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
+<script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('js/scannerBusqueda.js') }}"></script>
 @endpush
