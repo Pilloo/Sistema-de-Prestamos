@@ -30,7 +30,9 @@
         @yield('content')
     </main>
 
-    <x-footer />
+    <div class="mt-4">
+        <x-footer />
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>

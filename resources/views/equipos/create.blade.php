@@ -117,8 +117,8 @@
 
         <div class="d-flex gap-2">
           <button type="button" class="btn btn-secondary">Volver</button>
-          <button type="button" class="btn" onclick="openModal()">Escanear Código QR</button>
-
+          <button type="button" class="btn" onclick="openModal()">Escanear con camara</button>
+          <button type="button" class="btn" onclick="openBarcodeModal()">Escanear con lector</button>
           <button type="submit" class="btn btn-primary">Confirmar</button>
         </div>
 
@@ -131,6 +131,16 @@
             <div id="result">Resultado: <em>Esperando escaneo...</em></div>
             </div>
         </div>
+
+        <!-- Modal para escáner físico -->
+        <div id="barcodeModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeBarcodeModal()">&times;</span>
+                <h3>Escanear con lector de código</h3>
+                <input type="text" id="barcodeInput" class="form-control" placeholder="Escanee el código aquí">
+            </div>
+        </div>
+
     </form>
   </div>
 
@@ -141,5 +151,5 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="{{ asset('js/scanner.js') }}"></script>
-
+<script src="{{ asset('js/scannerLector.js') }}"></script>
 @endpush

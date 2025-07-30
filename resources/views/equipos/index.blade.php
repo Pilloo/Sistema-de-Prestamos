@@ -70,10 +70,75 @@
                                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#verModal{{$index}}">Ver</button>
                                 <form action="{{ route('equipos.edit', ['equipo' => $item]) }}" method="get">
                                     <button type="submit" class="btn btn-warning">Editar</button>
-                                </form>  
+                                </form> 
+                                @if($item->estado_equipo->nombre!='Baja / Retirado')
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Eliminar</button>
+                                @else
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Restaurar</button>
+                                @endif 
                             </div>
                         </td>
                     </tr>
+
+                    <!--Modal detalle-->
+                    <div class="modal fade" id="verModal{{$index}}" tabindex="-1" aria-labelledby="modalLabel{{$index}}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalLabel{{$index}}">Detalle del Equipo</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Modelo:</strong> {{ $item->modelo }}</p>
+                                    <p><strong>Número de Serie:</strong> {{ $item->numero_serie ?? 'No disponible' }}</p>
+                                    <p><strong>Contenido Etiqueta:</strong> {{ $item->contenido_etiqueta ?? 'No disponible' }}</p>
+                                    <p><strong>Marca:</strong> {{ $item->marca && $item->marca->caracteristica ? $item->marca->caracteristica->nombre : 'Sin marca' }}</p>
+                                    <p><strong>Estado:</strong> {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}</p>
+                                    <p><strong>Categorías:</strong></p>
+                                    @foreach ($item->categorias as $categoria)
+                                        <span class="badge bg-secondary">{{ $categoria->caracteristica->nombre }}</span>
+                                    @endforeach
+                                    <p class="mt-3"><strong>Detalle:</strong> {{ $item->detalle ?? 'Sin detalle' }}</p>
+
+                                    @if ($item->img_path)
+                                        <div class="mt-3">
+                                            <strong>Imagen:</strong>
+                                            <img src="{{ asset('img/equipos/' . $item->img_path) }}" alt="Imagen equipo" class="img-thumbnail mt-2" style="width: 300px; height: 200px; object-fit: cover;">
+                                        </div>
+                                    @else
+                                        <p class="mt-3"><em>No hay imagen disponible.</em></p>
+                                    @endif
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal de confirmación eliminar/restaurar -->
+                    <div class="modal fade" id="confirmModal-{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje de confirmación</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {{ $item->estado_equipo->id != 7 ? '¿Seguro que quieres eliminar el equipo?' : '¿Seguro que quieres restaurar el equipo?' }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <form action="{{ route('equipos.destroy',['equipo'=>$item->id]) }}" method="post">
+                                        @method('DELETE')
+                                        @csrf
+                                        <button type="submit" class="btn {{ $item->estado_equipo->id != 7 ? 'btn-danger' : 'btn-primary' }}">Confirmar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     @endforeach
                 </tbody>
