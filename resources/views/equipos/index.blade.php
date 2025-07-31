@@ -168,7 +168,7 @@ Toast.fire({
                     </div>
 
                     <!-- Modal para escáner físico -->
-                    <div id="barcodeModal" class="modal">
+                    <div id="barcodeModal" class="scanner-modal">
                         <div class="modal-content">
                             <span class="close" onclick="closeBarcodeModal()">&times;</span>
                             <h3>Escanear con lector de código</h3>

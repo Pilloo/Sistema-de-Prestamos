@@ -116,15 +116,13 @@ class EquipoController extends Controller
         try {
             DB::beginTransaction();
 
-            $rutaImagenes = public_path('img/equipos'); // Ajusta el path si es diferente
+            $rutaImagenes = public_path('img/equipos');
 
             if ($request->hasFile('img_path')) {
-                // Borra la imagen anterior si existe
                 if ($equipo->img_path && File::exists($rutaImagenes . '/' . $equipo->img_path)) {
                     File::delete($rutaImagenes . '/' . $equipo->img_path);
                 }
 
-                // Guarda la nueva imagen
                 $file = $request->file('img_path');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $file->move($rutaImagenes, $filename);
@@ -132,7 +130,6 @@ class EquipoController extends Controller
                 $filename = $equipo->img_path;
             }
 
-            // Actualiza datos
             $equipo->update([
                 'modelo' => $request->modelo,
                 'numero_serie' => $request->numero_serie,
@@ -143,7 +140,6 @@ class EquipoController extends Controller
                 'img_path' => $filename,
             ]);
 
-            // Actualiza categorías relacionadas
             $categorias = $request->get('categorias');
             $equipo->categorias()->sync($categorias);
 
@@ -165,11 +161,9 @@ class EquipoController extends Controller
         $message = '';
 
         if ($equipo->estado_equipo_id != 7) {
-            // Cambiar a eliminado
             $equipo->estado_equipo_id = 7;
             $message = 'Equipo eliminado';
         } else {
-            // Restaurar (asumimos estado activo = 1)
             $equipo->estado_equipo_id = 1;
             $message = 'Equipo restaurado';
         }
