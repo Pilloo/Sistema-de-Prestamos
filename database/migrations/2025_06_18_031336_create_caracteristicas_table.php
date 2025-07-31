@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre',60);
             $table->tinyInteger('estado')->default(1);
+            $table->timestamps();
         });
     }
 

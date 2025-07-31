@@ -12,6 +12,10 @@ class Categoria extends Model
     public function caracteristica(){
         return $this->belongsTo(Caracteristica::class);
     }
+
+    public function equipos(){
+        return $this->belongsToMany(Equipo::class)->withTimestamps();
+    }
     
-    protected $fillable = ['idCaracteristica'];
+    protected $fillable = ['caracteristica_id'];
 }

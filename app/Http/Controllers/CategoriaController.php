@@ -17,7 +17,7 @@ class CategoriaController extends Controller
      */
     public function index()
     {
-        $categorias = Categoria::with('caracteristicas')->get();
+        $categorias = Categoria::with('caracteristica')->get();
         return view('categorias.index', [
             'categorias' => $categorias,
         ]);
@@ -45,7 +45,7 @@ class CategoriaController extends Controller
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->route('categorias.index')->with('error', 'Error al crear la categoría');
+            return redirect()->route('categorias.index')->with('error', 'Error al crear la categoría: ' . $e->getMessage());
         }
 
         return redirect()->route('categorias.index')->with('success', 'Categoría registrada');
@@ -78,10 +78,10 @@ class CategoriaController extends Controller
             ->update($request->validated());
         }catch (Exception $e) {
             DB::rollBack();
-            return redirect()->route('categorias.index')->with('error', 'Error al editar la categoría');
+            return redirect()->route('categorias.index')->with('error', 'Error al editar la categoría: ' . $e->getMessage());
         }
         
-        return redirect()->route('categorias.index')->with('sucess', 'Categoria editada');
+        return redirect()->route('categorias.index')->with('success', 'Categoria editada');
     }
 
     /**
