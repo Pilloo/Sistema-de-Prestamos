@@ -21,13 +21,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      // Este es el input que aparece en el buscador de la tabla
       const datatableSearchInput = document.querySelector(".datatable-input");
 
       if (datatableSearchInput) {
         datatableSearchInput.value = barcodeInput.value;
 
-        // ⚠️ Dispara el evento `input`, para que la tabla actualice los resultados
         datatableSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
       }
 
