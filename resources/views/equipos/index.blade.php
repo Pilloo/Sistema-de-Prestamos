@@ -122,11 +122,13 @@ Toast.fire({
                                     <p><strong>Contenido Etiqueta:</strong> {{ $item->contenido_etiqueta ?? 'No disponible' }}</p>
                                     <p><strong>Marca:</strong> {{ $item->marca && $item->marca->caracteristica ? $item->marca->caracteristica->nombre : 'Sin marca' }}</p>
                                     <p><strong>Estado:</strong> {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}</p>
+                                    <p><strong>Detalle:</strong> {{ $item->detalle ?? 'Sin detalle' }}</p>
+                                    <p><strong>Cantidad Total:</strong> {{ $item->cantidad_total ?? 'Cantidad no encontrada' }}</p>
+                                    <p><strong>Cantidad Disponible:</strong> {{ $item->cantidad_disponible ?? 'Cantidad no encontrada' }}</p>
                                     <p><strong>Categorías:</strong></p>
                                     @foreach ($item->categorias as $categoria)
                                         <span class="badge bg-secondary">{{ $categoria->caracteristica->nombre }}</span>
                                     @endforeach
-                                    <p class="mt-3"><strong>Detalle:</strong> {{ $item->detalle ?? 'Sin detalle' }}</p>
 
                                     @if ($item->img_path)
                                         <div class="mt-3">

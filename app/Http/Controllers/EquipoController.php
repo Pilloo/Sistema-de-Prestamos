@@ -8,6 +8,7 @@ use App\Models\Equipo;
 use App\Models\Marca;
 use App\Models\Caracteristica;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Js;
 use App\Http\Requests\StoreEquipoRequest;
 use App\Http\Requests\UpdateEquipoRequest;
 use App\Models\EstadoEquipo;
@@ -31,6 +32,25 @@ class EquipoController extends Controller
      */
     public function create()
     {
+        $equipos = Equipo::select('id', 'modelo', 'numero_serie', 'contenido_etiqueta', 'detalle', 'cantidad_total', 'marca_id', 'estado_equipo_id', 'img_path')
+            ->where('estado_equipo_id', '!=', 7)
+            ->get();
+
+        $equiposCategorias = $equipos->map(function ($equipo) {
+            return [
+                'id' => $equipo->id,
+                'modelo' => $equipo->modelo,
+                'numero_serie' => $equipo->numero_serie,
+                'contenido_etiqueta' => $equipo->contenido_etiqueta,
+                'detalle' => $equipo->detalle,
+                'cantidad_total' => $equipo->cantidad_total,
+                'marca_id' => $equipo->marca_id,
+                'estado_equipo_id' => $equipo->estado_equipo_id,
+                'img_path' => $equipo->img_path,
+                'categorias' => $equipo->categorias->pluck('id')->toArray(),
+            ];
+        });
+        
         $marcas = Marca::join('caracteristicas as c', 'marcas.caracteristica_id', '=', 'c.id')
             ->select('marcas.id as id', 'c.nombre as nombre')
             ->where('c.estado', 1)
@@ -43,7 +63,7 @@ class EquipoController extends Controller
 
         $estado_equipos = EstadoEquipo::all();
 
-        return view('equipos.create', compact('marcas', 'categorias', 'estado_equipos'));
+        return view('equipos.create', compact('marcas', 'categorias', 'estado_equipos', 'equipos', 'equiposCategorias' ));
     }
 
     /**
@@ -59,19 +79,33 @@ class EquipoController extends Controller
             }else{
                 $name = null;
             }
-            $equipo->fill([
-                'modelo' => $request->modelo,
-                'numero_serie' => $request->numero_serie,
-                'contenido_etiqueta' => $request->contenido_etiqueta,
-                'detalle' => $request->detalle,
-                'marca_id' => $request->marca_id,
-                'estado_equipo_id' => $request->estado_equipo_id,
-                'img_path' => $name
-            ]);
 
-            $equipo->save();
-            $categorias = $request->get('categorias');
-            $equipo->categorias()->attach($categorias);
+            $equipoExistente = Equipo::where('modelo', $request->modelo)
+                ->where('numero_serie', $request->numero_serie)
+                ->first();
+            
+            if($equipoExistente){
+                $equipoExistente->cantidad_total += $request->cantidad_total;
+                $equipoExistente->cantidad_disponible += $request->cantidad_total;
+                $equipoExistente->save();
+            }else{
+                $equipo->fill([
+                    'modelo' => $request->modelo,
+                    'numero_serie' => $request->numero_serie,
+                    'contenido_etiqueta' => $request->contenido_etiqueta,
+                    'detalle' => $request->detalle,
+                    'cantidad_total' => $request->cantidad_total,
+                    'cantidad_disponible' => $request->cantidad_total,
+                    'marca_id' => $request->marca_id,
+                    'estado_equipo_id' => $request->estado_equipo_id,
+                    'img_path' => $name
+                ]);
+
+                $equipo->save();
+                $categorias = $request->get('categorias');
+                $equipo->categorias()->attach($categorias);
+            }
+            
             DB::commit();
         }catch(Exception $e){
             DB::rollBack();
@@ -130,11 +164,24 @@ class EquipoController extends Controller
                 $filename = $equipo->img_path;
             }
 
+            // calculo para poder actualizar la cantidad disponible
+            $cantidadTotalNueva = $request->cantidad_total;
+            $prestadosActualmente = $equipo->cantidad_total - $equipo->cantidad_disponible;
+            // se valida que la nueva cantidad total no sea menor que los que ya están prestados
+            if ($cantidadTotalNueva < $prestadosActualmente) {
+                throw new Exception('No se puede reducir la cantidad total por debajo de la cantidad prestada (' . $prestadosActualmente . ')');
+            }
+
+            $diferencia = $cantidadTotalNueva - $equipo->cantidad_total;
+            $cantidadDisponibleNueva = $equipo->cantidad_disponible + $diferencia;
+
             $equipo->update([
                 'modelo' => $request->modelo,
                 'numero_serie' => $request->numero_serie,
                 'contenido_etiqueta' => $request->contenido_etiqueta,
                 'detalle' => $request->detalle,
+                'cantidad_total' => $cantidadTotalNueva,
+                'cantidad_disponible' => $cantidadDisponibleNueva,
                 'marca_id' => $request->marca_id,
                 'estado_equipo_id' => $request->estado_equipo_id,
                 'img_path' => $filename,
