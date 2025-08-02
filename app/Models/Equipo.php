@@ -36,5 +36,5 @@ class Equipo extends Model
         return $name;
     }
 
-    protected $fillable = ['modelo', 'numero_serie', 'contenido_etiqueta', 'detalle', 'marca_id', 'estado_equipo_id', 'img_path'];
+    protected $fillable = ['modelo', 'numero_serie', 'contenido_etiqueta', 'detalle', 'marca_id', 'estado_equipo_id', 'img_path', 'cantidad_total', 'cantidad_disponible'];
 }

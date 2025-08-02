@@ -21,6 +21,17 @@
           <img id="preview" class="img-fluid border rounded mx-auto d-block" style="max-width: 300px; display: none;">
         </div>
 
+        <div class="col-md-6 mb-3">
+            <label for="equipo_id" class="form-label">Elegir equipo ya registrado:</label>
+            <select name="equipo_id" id="equipo_id" class="form-select">
+                <option value="">-- Nuevo equipo --</option>
+                @foreach ($equipos as $item)
+                <option value="{{ $item->id }}">{{ $item->modelo }} ({{ $item->numero_serie }})</option>
+                @endforeach
+            </select>
+        </div>
+
+
         <div class="col-md-6">
             <label for="img_path" class="form-label">Añadir imagen:</label>
             <input type="file" name="img_path" id="img_path" class="form-control" accept="image/*">
@@ -57,6 +68,14 @@
             <label for="detalle" class="form-label">Detalle:</label>
             <input type="text" name="detalle" id="detalle" class="form-control" value="{{old('detalle')}}">
             @error('detalle')
+            <small class="text-danger">{{'*'.$message}}</small>
+            @enderror
+        </div>
+
+        <div class="col-md-6 mb-2">
+            <label id="cantidad_label" for="cantidad_total" class="form-label">Cantidad:</label>
+            <input type="number" name="cantidad_total" id="cantidad_total" class="form-control" min="1" value="{{old('cantidad_total')}}">
+            @error('cantidad_total')
             <small class="text-danger">{{'*'.$message}}</small>
             @enderror
         </div>
@@ -152,4 +171,11 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="{{ asset('js/scanner.js') }}"></script>
 <script src="{{ asset('js/scannerLector.js') }}"></script>
+
+<script>
+    const equiposData = @json($equiposCategorias);
+    console.log(equiposData);
+</script>
+
+<script src="{{ asset('js/insertarEquipoRegistrado.js') }}"></script>
 @endpush

@@ -21,8 +21,22 @@ class StoreEquipoRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'estado_equipo_id' => 'required|exists:estado_equipos,id',
+        $rules = [
+            'cantidad_total' => 'required|integer|min:1',
         ];
+
+        if (!$this->filled('equipo_id')) {
+            $rules = array_merge($rules, [
+                'modelo' => 'required|string|max:255',
+                'numero_serie' => 'nullable|string',
+                'contenido_etiqueta' => 'nullable|string',
+                'detalle' => 'nullable|string',
+                'marca_id' => 'required|exists:marcas,id',
+                'estado_equipo_id' => 'required|exists:estado_equipos,id',
+                'categorias' => 'required|array',
+            ]);
+        }
+
+        return $rules;
     }
 }

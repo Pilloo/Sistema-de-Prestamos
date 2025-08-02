@@ -72,6 +72,15 @@
             @enderror
         </div>
 
+        <div class="col-md-6 mb-2">
+            <label for="cantidad_total" class="form-label">Cantidad:</label>
+            <input type="number" name="cantidad_total" id="cantidad_total" class="form-control" min="0" 
+                value="{{ old('cantidad_total', $equipo->cantidad_total) }}">
+            @error('cantidad_total')
+            <small class="text-danger">{{'*'.$message}}</small>
+            @enderror
+        </div>
+
         <div class="col-md-6">
             <label class="form-label">Categorías:</label>
 
@@ -158,4 +167,27 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="{{ asset('js/scanner.js') }}"></script>
 <script src="{{ asset('js/scannerLector.js') }}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const totalInput = document.getElementById('cantidad_total');
+    const cantidadPrestada = parseInt('{{ $equipo->cantidad_total - $equipo->cantidad_disponible }}');
+
+    totalInput.addEventListener('input', function () {
+        const nuevaCantidad = parseInt(this.value);
+
+        if (nuevaCantidad < cantidadPrestada) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Cantidad inválida',
+                text: `Ya hay ${cantidadPrestada} unidades prestadas. No podés ingresar una cantidad total menor a eso.`,
+                confirmButtonText: 'Entendido',
+            });
+
+            this.value = cantidadPrestada;
+        }
+    });
+});
+</script>
+
 @endpush

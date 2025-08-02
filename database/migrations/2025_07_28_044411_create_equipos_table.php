@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('equipos', function (Blueprint $table) {
             $table->id();
-            $table->string('modelo',128);
+            $table->string('modelo',128)->nullable();
             $table->string('numero_serie',128)->nullable();
-            $table->string('contenido_etiqueta',128);
+            $table->string('contenido_etiqueta',128)->nullable();
             $table->string('detalle',512)->nullable();
-            $table->foreignId('marca_id')->constrained('marcas')->onDelete('cascade');
+            $table->integer('cantidad_total')->unsigned();
+            $table->integer('cantidad_disponible')->unsigned();
+            $table->foreignId('marca_id')->constrained('marcas')->onDelete('cascade')->nullable();
             $table->foreignId('estado_equipo_id')->constrained('estado_equipos')->onDelete('cascade');
             $table->string('img_path',255)->nullable();
             $table->timestamps();
