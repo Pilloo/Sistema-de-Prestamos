@@ -51,11 +51,6 @@ Toast.fire({
             </div>
         </div>
 
-
-        <div class="mb-3">
-            <input id="placeholderEquipos" type="text" class="form-control" id="buscador" placeholder="Buscar equipo...">
-        </div>
-
         <div id="contenedorTablaEquipos">
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
