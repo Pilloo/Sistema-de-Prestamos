@@ -23,6 +23,9 @@
 
     @stack('css')
 </head>
+
+
+
 <body>
 
     <div class="wrapper">
@@ -77,4 +80,5 @@
     @stack('js')
 
 </body>
+
 </html>

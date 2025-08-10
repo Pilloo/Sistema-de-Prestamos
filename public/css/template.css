@@ -15,6 +15,14 @@
   margin-top: 40px;
 }
 
+#contenedorDepartamentos {
+  margin-top: 40px;
+}
+
+#contenedorSecciones {
+  margin-top: 40px;
+}
+
 #contenedorTablaCategorias {
   max-height: 300px;
   overflow-y: auto;
@@ -36,6 +44,20 @@
   border-radius: 6px;
 }
 
+#contenedorTablaDepartamentos {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
+#contenedorTablaSecciones {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
 #placeholderCategorias {
   color: #aaa;
 }
@@ -45,6 +67,14 @@
 }
 
 #placeholderEquipos {
+  color: #aaa;
+}
+
+#placeholderDepartamentos {
+  color: #aaa;
+}
+
+#placeholderSecciones {
   color: #aaa;
 }
 

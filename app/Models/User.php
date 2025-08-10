@@ -8,7 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class Usuario extends Authenticatable
+
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -18,12 +19,26 @@ class Usuario extends Authenticatable
      *
      * @var list<string>
      */
+
+    public function seccion()
+    {
+        return $this->belongsTo(Seccion::class);
+    }
+
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class);
+    }
+
     protected $fillable = [
-        'nombre',
+        'name',
+        'email',
+        'password',
         'primer_apellido',
         'segundo_apellido',
-        'correo_electronico',
-        'contraseña',
+        'seccion_id',
+        'departamento_id',
+        'img_path'
     ];
 
     /**
@@ -32,7 +47,7 @@ class Usuario extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'contraseña',
+        'password',
         'remember_token',
     ];
 
@@ -45,7 +60,19 @@ class Usuario extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'contraseña' => 'hashed',
+            'password' => 'hashed',
         ];
     }
+
+    public function handleUploadImage($image)
+    {
+        $file = $image;
+
+        $name = time() . $file->getClientOriginalName();
+
+        $file->move(public_path() . '/img/users/', $name);
+
+        return $name;
+    }
+
 }

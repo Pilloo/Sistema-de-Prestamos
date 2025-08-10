@@ -141,7 +141,7 @@
           <button type="submit" class="btn btn-primary">Confirmar</button>
         </div>
 
-        <!-- Modal Scanner Bootstrap -->
+        <!-- Modal Scanner -->
         <div id="qrModal" class="modal">
             <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
