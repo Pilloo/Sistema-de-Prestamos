@@ -18,7 +18,7 @@ class Caracteristica extends Model
     }
 
     public function seccion(){
-        return $this->hasOne(Seccion::class);
+        return $this->hasOne(Seccione::class);
     }
 
     public function departamento(){

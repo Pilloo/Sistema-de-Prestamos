@@ -22,7 +22,7 @@ class User extends Authenticatable
 
     public function seccion()
     {
-        return $this->belongsTo(Seccion::class);
+        return $this->belongsTo(Seccione::class);
     }
 
     public function departamento()

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSeccionRequest;
 use App\Http\Requests\UpdateSeccionRequest;
-use App\Models\Seccion;
+use App\Models\Seccione;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Caracteristica;
@@ -17,7 +17,7 @@ class SeccionController extends Controller
      */
     public function index()
     {
-        $secciones = Seccion::with('caracteristica')->get();
+        $secciones = Seccione::with('caracteristica')->get();
         return view('secciones.index', [
             'secciones' => $secciones,
         ]);
@@ -38,7 +38,9 @@ class SeccionController extends Controller
     {
         try {
             DB::beginTransaction();
-            $caracteristica = Caracteristica::create($request->validated());
+            $caracteristica = Caracteristica::create([
+                'nombre' => $request->input('nombre'),
+            ]);
             $caracteristica->seccion()->create([
                 'caracteristica_id' => $caracteristica->id
             ]);
@@ -62,7 +64,7 @@ class SeccionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Seccion $seccion)
+    public function edit(Seccione $seccion)
     {
         $seccion->load('caracteristica');
         return view('secciones.edit', compact('seccion'));
@@ -71,7 +73,7 @@ class SeccionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSeccionRequest $request, Seccion $seccion)
+    public function update(UpdateSeccionRequest $request, Seccione $seccion)
     {
         try {
             Caracteristica::where('id', $seccion->caracteristica->id)
@@ -90,7 +92,7 @@ class SeccionController extends Controller
     public function destroy(string $id)
     {
         $message = "";
-        $seccion = Seccion::find($id);
+        $seccion = Seccione::find($id);
         if ($seccion->caracteristica->estado == 1) {
             Caracteristica::where('id', $seccion->caracteristica->id)
                 ->update([

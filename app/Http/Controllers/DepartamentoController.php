@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDepartamentoRequest;
 use App\Http\Requests\UpdateDepartamentoRequest;
 use App\Models\Departamento;
+use App\Models\Seccione;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Caracteristica;
@@ -38,7 +39,9 @@ class DepartamentoController extends Controller
     {
         try {
             DB::beginTransaction();
-            $caracteristica = Caracteristica::create($request->validated());
+            $caracteristica = Caracteristica::create([
+                'nombre' => $request->input('nombre'),
+            ]);
             $caracteristica->departamento()->create([
                 'caracteristica_id' => $caracteristica->id
             ]);

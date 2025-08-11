@@ -15,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Departamento;
-use App\Models\Seccion;
+use App\Models\Seccione;
 use App\Models\User;
 use Illuminate\Contracts\Cache\Store;
 
@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with(["secciones.caracteristica", "departamentos.caracteristica"])->latest()->get();
+        $users = User::with(["seccion.caracteristica", "departamento.caracteristica"])->latest()->get();
         return view('users.index', compact('users'));
     }
 
@@ -42,7 +42,7 @@ class UserController extends Controller
             ->where('c.estado', 1)
             ->get();
 
-        $secciones = Seccion::join('caracteristicas as c', 'secciones.caracteristica_id', '=', 'c.id')
+        $secciones = Seccione::join('caracteristicas as c', 'secciones.caracteristica_id', '=', 'c.id')
             ->select('secciones.id as id', 'c.nombre as nombre')
             ->where('c.estado', 1)
             ->get();

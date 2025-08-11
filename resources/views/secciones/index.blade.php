@@ -88,7 +88,7 @@ Toast.fire({
                     <div class="modal fade" id="editarSeccionModal-{{ $seccion->id }}" tabindex="-1" aria-labelledby="seccionModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form id="seccionForm" action="{{ route('secciones.update',['seccion'=>$seccion]) }}" method="post">
+                                <form id="seccionForm" action="{{ route('secciones.update',['seccione'=>$seccion]) }}" method="post">
                                     @method('PATCH')
                                     @csrf
                                         <div class="modal-header">
