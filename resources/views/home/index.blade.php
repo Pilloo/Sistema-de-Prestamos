@@ -128,18 +128,6 @@ Toast.fire({
                         <i class="fa-solid fa-boxes-stacked"></i>
                         Inventario
                     </a>
-                    <a href="#categorias" class="boton">
-                        <i class="fa-solid fa-boxes-stacked"></i>
-                        Categorías
-                    </a>
-                    <a href="#marcas" class="boton">
-                        <i class="fa-solid fa-boxes-stacked"></i>
-                        Marcas
-                    </a>
-                    <a href="#equipos" class="boton">
-                        <i class="fa-solid fa-boxes-stacked"></i>
-                        Equipos
-                    </a>
                 </div>
             </div>
         </div>

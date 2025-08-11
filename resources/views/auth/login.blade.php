@@ -49,7 +49,7 @@
 
     <p class="register-text mt-3">
       ¿No tiene una cuenta?
-      <a href="Registro.html" class="register-link">Registrarse</a>
+      <a href="{{ route('register')}}" class="register-link">Registrarse</a>
     </p>
   </div>
 

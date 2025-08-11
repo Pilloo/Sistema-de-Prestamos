@@ -17,5 +17,13 @@ class Caracteristica extends Model
         return $this->hasOne(Marca::class);
     }
 
+    public function seccion(){
+        return $this->hasOne(Seccione::class);
+    }
+
+    public function departamento(){
+        return $this->hasOne(Departamento::class);
+    }
+
     protected $fillable = ['nombre','estado'];
 }

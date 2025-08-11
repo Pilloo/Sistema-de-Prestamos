@@ -23,6 +23,9 @@
 
     @stack('css')
 </head>
+
+
+
 <body>
 
     <div class="wrapper">
@@ -31,7 +34,7 @@
 
         <!-- Contenido principal -->
         <div class="main">
-        <x-navigation-header />
+        <!--<x-navigation-header />-->
 
         <main class="contenido">
             @yield('content')
@@ -77,4 +80,5 @@
     @stack('js')
 
 </body>
+
 </html>
