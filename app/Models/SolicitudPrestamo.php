@@ -9,6 +9,14 @@ class SolicitudPrestamo extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'fecha_prestamo',
+        'fecha_limite_asignada',
+        'fecha_devolucion_efectiva',
+        'descripcion',
+        'detalle_entrega',
+    ];
+
     public function prestamo(){
         return $this->hasOne(Prestamo::class);
     }
@@ -16,7 +24,4 @@ class SolicitudPrestamo extends Model
     public function estadoSolicitud(){
         return $this->belongsTo(EstadoSolicitud::class);
     }
-
-    protected $fillable = [];
-
 }
