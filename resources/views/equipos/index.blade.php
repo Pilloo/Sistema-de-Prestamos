@@ -8,6 +8,28 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="{{ asset('css/scannerLector.css') }}">
+
+<style>
+    .ContenidoPrincipal {
+        background-color: #f8f9fa;
+    }
+
+    #contenedorEquipos {
+        margin-top: 40px;
+    }
+
+    #contenedorTablaEquipos {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+    }
+
+    #placeholderEquipos {
+        color: #aaa;
+    }
+</style>
+
 @endpush
 
 @section('content')
@@ -57,9 +79,6 @@ Toast.fire({
                     <tr>
                     <th>#</th>
                     <th>Equipo</th>
-                    <th>Marca</th>
-                    <th>Categoría</th>
-                    <th>Codigo</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                     </tr>
@@ -68,22 +87,7 @@ Toast.fire({
                     @foreach($equipos as $index => $item)
                     <tr>
                         <td>{{ $item->id }}</td>    
-                        <td>{{ $item->modelo }}</td>
-                        <td>
-                            {{ $item->marca && $item->marca->caracteristica ? $item->marca->caracteristica->nombre : 'Sin marca' }}
-                        </td>
-                        <td>
-                            @foreach ($item->categorias as $listaCategorias)
-                                <div class="container" style="font-size: small;">
-                                    <div class="row">
-                                        <span class="m-1 rounded-pill p-1 bg-secondary text-white text-center">{{$listaCategorias->caracteristica->nombre}}</span>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </td>
-                        <td>
-                            {{ $item->contenido_etiqueta ? $item->contenido_etiqueta : 'Sin codigo' }}
-                        </td>
+                        <td>{{ $item->lote ? $item->lote->modelo : 'Sin lote' }}</td>
                         <td>
                             {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}
                         </td>
@@ -112,28 +116,7 @@ Toast.fire({
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <p><strong>Modelo:</strong> {{ $item->modelo }}</p>
-                                    <p><strong>Número de Serie:</strong> {{ $item->numero_serie ?? 'No disponible' }}</p>
-                                    <p><strong>Contenido Etiqueta:</strong> {{ $item->contenido_etiqueta ?? 'No disponible' }}</p>
-                                    <p><strong>Marca:</strong> {{ $item->marca && $item->marca->caracteristica ? $item->marca->caracteristica->nombre : 'Sin marca' }}</p>
-                                    <p><strong>Estado:</strong> {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}</p>
-                                    <p><strong>Detalle:</strong> {{ $item->detalle ?? 'Sin detalle' }}</p>
-                                    <p><strong>Cantidad Total:</strong> {{ $item->cantidad_total ?? 'Cantidad no encontrada' }}</p>
-                                    <p><strong>Cantidad Disponible:</strong> {{ $item->cantidad_disponible ?? 'Cantidad no encontrada' }}</p>
-                                    <p><strong>Categorías:</strong></p>
-                                    @foreach ($item->categorias as $categoria)
-                                        <span class="badge bg-secondary">{{ $categoria->caracteristica->nombre }}</span>
-                                    @endforeach
-
-                                    @if ($item->img_path)
-                                        <div class="mt-3">
-                                            <strong>Imagen:</strong>
-                                            <img src="{{ asset('img/equipos/' . $item->img_path) }}" alt="Imagen equipo" class="img-thumbnail mt-2" style="width: 300px; height: 200px; object-fit: cover;">
-                                        </div>
-                                    @else
-                                        <p class="mt-3"><em>No hay imagen disponible.</em></p>
-                                    @endif
-                                </div>
+                                    
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                 </div>
