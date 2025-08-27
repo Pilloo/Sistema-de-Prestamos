@@ -8,6 +8,27 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<style>
+    .ContenidoPrincipal {
+        background-color: #f8f9fa;
+    }
+
+    #contenedorDepartamentos {
+        margin-top: 40px;
+    }
+
+    #contenedorTablaDepartamentos {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+    }
+
+    #placeholderDepartamentos {
+        color: #aaa;
+    }
+</style>
+
 @endpush
 
 @section('content')

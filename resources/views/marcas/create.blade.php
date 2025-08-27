@@ -1,5 +1,5 @@
 <div class="modal fade" id="crearMarcaModal" tabindex="-1" aria-labelledby="marcaCrearModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <form id="marcaForm" action="{{ route('marcas.store') }}" method="post">
         @csrf  

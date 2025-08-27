@@ -8,6 +8,28 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="{{ asset('css/scannerLector.css') }}">
+
+<style>
+    .ContenidoPrincipal {
+        background-color: #f8f9fa;
+    }
+
+    #contenedorEquipos {
+        margin-top: 40px;
+    }
+
+    #contenedorTablaEquipos {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+    }
+
+    #placeholderEquipos {
+        color: #aaa;
+    }
+</style>
+
 @endpush
 
 @section('content')

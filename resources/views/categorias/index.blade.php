@@ -3,130 +3,204 @@
 @section('title','Categorias')
 
 @push('css')
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
-<link href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- DataTables CSS para Bootstrap 5 -->
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<style>
+    body {
+      background-image: url(img/130.jpg) !important;
+      background-size: cover;
+      background-repeat: no-repeat;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 18px 32px rgba(25, 24, 24, 0.452);
+    }
+    .panel h2 {
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+    .btn-success {
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .table {
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    thead {
+      background: #f0f2f5;
+    }
+    .badge {
+      font-size: 0.85rem;
+      padding: 0.5em 0.8em;
+      border-radius: 12px;
+    }
+    .btn-sm {
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    /* Hover bonito en filas */
+    tbody tr:hover {
+      background-color: #f9fafc;
+      transition: background 0.2s;
+    }
+    .btn-agregar{
+        background-color: #1e73be !important; /*Azul claro*/
+        color: #fff !important;
+    }
+    .btn-activo{
+        background-color: #329b46 !important;
+        color: #fff !important;
+    }
+    .btn-editar{
+        background-color: #1e73be !important; /*Azul claro*/
+        color: #fff !important;
+    }
+    .btn-eliminar{
+        background-color: #b85a05 !important;
+        color: #fff !important;
+    }
+</style>
 @endpush
 
 @section('content')
-
 @if(session('success'))
 <script>
-// Para recuperar el mensaje que quiero que muestre el TOAST
-let message = "{{ session('success') }}";
-
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 1500,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.onmouseenter = Swal.stopTimer;
-    toast.onmouseleave = Swal.resumeTimer;
-  }
-});
-Toast.fire({
-  icon: "success",
-  title: message // ← CORRECTO (sin punto y coma)
+Swal.fire({
+    toast: true,
+    position: "top-end",
+    icon: "success",
+    title: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true
 });
 </script>
 @endif
 @if(session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
+<div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<body class="ContenidoPrincipal">
-    <div id="contenedorCategorias" class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="container py-5">
+    <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Listado de Categorías</h2>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">Agregar Categoría</button>
+            <button class="btn btn-agregar" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">+ Agregar Categoría</button>
         </div>
 
-        <div class="mb-3">
-            <input id="placeholderCategorias" type="text" class="form-control" id="buscador" placeholder="Buscar categoría...">
-        </div>
+        <!-- Buscador (queda oculto porque DataTables ya tiene buscador integrado) -->
+        {{-- <div class="mb-3">
+            <input type="text" id="buscar" class="form-control" placeholder="Buscar Categoría...">
+        </div> --}}
 
-        <div id="contenedorTablaCategorias">
-            <table id="datatablesSimple" class="table table-striped">
+        <div class="table-responsive">
+            <table id="tablaCategorias" class="table align-middle">
                 <thead>
                     <tr>
-                    <th>#</th>
-                    <th>Categoría</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
+                        <th>#</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="categoriaBody">
+                <tbody>
                     @foreach($categorias as $categoria)
                     <tr>
-                        <td>{{ $categoria->id }}</td>    
+                        <td>{{ $categoria->id }}</td>
                         <td>{{ $categoria->caracteristica->nombre }}</td>
                         <td>
-                            @if ($categoria->caracteristica->estado == 1)
-                                <span class="badge rounded-pill text-bg-success">Activo</span>
+                            @if($categoria->caracteristica->estado == 1)
+                                <span class="badge bg-success">Activo</span>
                             @else
-                                <span class="badge rounded-pill text-bg-danger">Eliminado</span>
+                                <span class="badge bg-secondary">Inactivo</span>
                             @endif
                         </td>
                         <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editarCategoriaModal-{{ $categoria->id }}">Editar</button>
-                                @if ($categoria->caracteristica->estado == 1)
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Eliminar</button>
-                                @else
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Restaurar</button>
-                                @endif
-                            </div>
+                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#editarCategoriaModal-{{ $categoria->id }}">Editar</button>
+                            @if ($categoria->caracteristica->estado == 1)
+                                <button class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Eliminar</button>
+                            @else
+                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Restaurar</button>
+                            @endif
                         </td>
                     </tr>
 
-                    <!-- Modal editar categoria -->
-                    <div class="modal fade" id="editarCategoriaModal-{{ $categoria->id }}" tabindex="-1" aria-labelledby="categoriaModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                    <!-- Modal Editar -->
+                    <div class="modal fade" id="editarCategoriaModal-{{ $categoria->id }}" tabindex="-1" aria-labelledby="editarCategoriaLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
-                                <form id="categoriaForm" action="{{ route('categorias.update',['categoria'=>$categoria]) }}" method="post">
-                                    @method('PATCH')
+                                <form action="{{ route('categorias.update', $categoria->id) }}" method="post">
                                     @csrf
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="categoriaModalLabel">Agregar Categoría</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="nombreCategoria" class="form-label">Nombre de la categoría</label>
-                                                <input type="text" name="nombre" id="nombreCategoria" class="form-control" value="{{old('nombre',$categoria->caracteristica->nombre)}}">
-                                                @error('nombre')
-                                                <small class="text-danger">{{'*'.$message}}</small>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary">Actualizar</button>
-                                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        </div>
+                                    @method('PATCH')
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Editar Categoría</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="nombreCategoria">Nombre de la categoría</label>
+                                        <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $categoria->caracteristica->nombre) }}">
+                                        @error('nombre')
+                                            <small class="text-danger">{{ '*'.$message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
                     </div>
+
                     @endforeach
                 </tbody>
             </table>
         </div>
     </div>
-</body>
+</div>
 
 @include('categorias.create')
 
 @endsection
 
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
-<script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- jQuery necesario para DataTables -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+  $('#tablaCategorias').DataTable({
+    "scrollY": "400px",
+    "scrollCollapse": true,
+    "paging": true,
+    "language": {
+      "search": "Buscar:",
+      "lengthMenu": "Mostrar _MENU_ registros",
+      "info": "Mostrando _START_ a _END_ de _TOTAL_ categorías",
+      "paginate": {
+        "next": "Siguiente",
+        "previous": "Anterior"
+      },
+      "zeroRecords": "No se encontraron categorías"
+    },
+    "columnDefs": [
+      { "orderable": false, "targets": 3 }
+    ]
+  });
+});
+</script>
 @endpush
