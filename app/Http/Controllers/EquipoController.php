@@ -12,6 +12,7 @@ use Illuminate\Support\Js;
 use App\Http\Requests\StoreEquipoRequest;
 use App\Http\Requests\UpdateEquipoRequest;
 use App\Models\EstadoEquipo;
+use App\Models\LoteEquipo;
 use Illuminate\Support\Facades\File;
 use Exception;
 
@@ -22,7 +23,7 @@ class EquipoController extends Controller
      */
     public function index()
     {
-        $equipos = Equipo::with(["categorias.caracteristica", "marca.caracteristica", "estado_equipo"])->latest()->get();
+        $equipos = Equipo::with(["estado_equipo", "lote"])->latest()->get();
 
         return view('equipos.index', compact('equipos'));
     }
