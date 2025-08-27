@@ -13,9 +13,9 @@ class Categoria extends Model
         return $this->belongsTo(Caracteristica::class);
     }
 
-    public function equipos(){
-        return $this->belongsToMany(Equipo::class)->withTimestamps();
-    }
+    public function loteEquipos() {
+    return $this->belongsToMany(LoteEquipo::class)->withTimestamps();
+}
     
     protected $fillable = ['caracteristica_id'];
 }

@@ -14,7 +14,7 @@ class Marca extends Model
     }
 
     public function equipos(){
-        return $this->hasMany(Equipo::class);
+        return $this->hasMany(LoteEquipo::class);
     }
 
     protected $fillable = ['caracteristica_id'];
