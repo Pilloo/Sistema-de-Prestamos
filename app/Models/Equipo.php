@@ -10,14 +10,9 @@ class Equipo extends Model
 {
     use HasFactory;
 
-    public function categorias()
+    public function lote()
     {
-        return $this->belongsToMany(Categoria::class)->withTimestamps();
-    }
-
-    public function marca()
-    {
-        return $this->belongsTo(Marca::class);
+        return $this->belongsTo(LoteEquipo::class);
     }
 
     public function estado_equipo()
@@ -25,16 +20,5 @@ class Equipo extends Model
         return $this->belongsTo(EstadoEquipo::class);
     }
 
-    public function handleUploadImage($image)
-    {
-        $file = $image;
-
-        $name = time() . $file->getClientOriginalName();
-
-        $file->move(public_path() . '/img/equipos/', $name);
-
-        return $name;
-    }
-
-    protected $fillable = ['modelo', 'numero_serie', 'contenido_etiqueta', 'detalle', 'marca_id', 'estado_equipo_id', 'img_path', 'cantidad_total', 'cantidad_disponible'];
+    protected $fillable = ['numero_serie', 'lote_equipo_id', 'estado_equipo_id'];
 }

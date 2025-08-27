@@ -71,6 +71,10 @@
     </a>
     @endcan
 
+    <a href="{{ route('lotes.index')}}" class="texto">
+        <i class="bi bi-list-columns-reverse"></i><span class="TextoNav">Lotes </span>
+    </a>
+
     <!-- Cerrar sesión -->
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf

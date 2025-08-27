@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SeccionController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LoteEquipoController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
@@ -24,6 +25,12 @@ Route::get('/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::middleware('auth')->group(function () {
+    Route::prefix('lotes')->name('lotes.')->group(function () {
+        Route::get('{loteEquipo}/seriales', [LoteEquipoController::class, 'showSerialForm'])->name('seriales.create');
+        Route::post('{loteEquipo}/seriales', [LoteEquipoController::class, 'saveSerials'])->name('seriales.store');
+        Route::resource('/', LoteEquipoController::class)->parameters(['' => 'loteEquipo']);
+    });
+
     Route::resources([
         'categorias' => CategoriaController::class,
         'marcas' => MarcaController::class,
@@ -31,7 +38,7 @@ Route::middleware('auth')->group(function () {
         'roles' => RoleController::class,
         'users' => UserController::class,
         'secciones' => SeccionController::class,
-        'departamentos' => DepartamentoController::class
-
+        'departamentos' => DepartamentoController::class,
     ]);
 });
+

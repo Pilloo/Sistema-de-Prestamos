@@ -12,7 +12,6 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        // Crear usuario administrador
         $admin = User::create([
             'name' => 'Administrador',
             'primer_apellido' => 'Principal',
@@ -23,10 +22,8 @@ class AdminSeeder extends Seeder
             'departamento_id' => null,
         ]);
 
-        // Crear rol admin si no existe
         $role = Role::firstOrCreate(['name' => 'admin']);
 
-        // Crear todos los permisos si no existen y asignar al rol
         $permissions = Permission::pluck('name');
         if ($permissions->isEmpty()) {
             $defaultPermissions = [
@@ -34,7 +31,7 @@ class AdminSeeder extends Seeder
                 'ver roles', 'crear roles', 'editar roles', 'eliminar roles',
                 'ver equipos', 'crear equipos', 'editar equipos', 'eliminar equipos',
                 'ver prestamos', 'crear prestamos', 'editar prestamos', 'eliminar prestamos',
-                // Agrega aquí todos los permisos que tu sistema requiera
+                'ver lotes', 'crear lotes', 'editar lotes', 'eliminar lotes',
             ];
             foreach ($defaultPermissions as $perm) {
                 Permission::firstOrCreate(['name' => $perm]);
@@ -43,7 +40,6 @@ class AdminSeeder extends Seeder
         }
         $role->syncPermissions($permissions);
 
-        // Asignar rol admin al usuario
         $admin->assignRole($role);
     }
 }
