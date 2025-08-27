@@ -1,73 +1,80 @@
 @extends('template')
 
-
-@section('title','roles')
-
-
-@push('css-datatable')
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
-@endpush
-
+@section('title', 'Roles')
 
 @push('css')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
+    body {
+        background-image: url(img/130.jpg) !important;
+        background-size: cover;
+        background-repeat: no-repeat;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .panel {
+        background: #fff;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 18px 32px rgba(25, 24, 24, 0.452);
+    }
+    .panel h2 {
+        font-weight: 700;
+        font-size: 1.4rem;
+    }
+    .table {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    thead {
+        background: #f0f2f5;
+    }
+    .btn-sm {
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    .btn-agregar {
+        background-color: #1e73be !important;
+        color: #fff !important;
+    }
+    .btn-editar {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+    .btn-eliminar {
+        background-color: #b85a05 !important;
+        color: #fff !important;
+    }
 </style>
 @endpush
 
-
 @section('content')
+
 @if(session('success'))
 <script>
-// Mostrar mensaje con SweetAlert
-let message = "{{ session('success') }}";
-
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 1500,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.onmouseenter = Swal.stopTimer;
-    toast.onmouseleave = Swal.resumeTimer;
-  }
-});
-Toast.fire({
-  icon: "success",
-  title: message
+Swal.fire({
+    toast: true,
+    position: "top-end",
+    icon: "success",
+    title: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true
 });
 </script>
 @endif
 
-
-<div class="container-fluid px-4">
-    <h1 class="mt-4 text-center">Roles</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Inicio</a></li>
-        <li class="breadcrumb-item active">Roles</li>
-    </ol>
-
-
-
-
-    <div class="mb-4">
-        <a href="{{ route('roles.create') }}">
-            <button type="button" class="btn btn-primary">Añadir nuevo rol</button>
-        </a>
-    </div>
-
-
-
-
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-table me-1"></i>
-            Tabla roles
+<div class="container py-5">
+    <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Listado de Roles</h2>
+            <a href="{{ route('roles.create') }}" class="btn btn-agregar">+ Añadir nuevo rol</a>
         </div>
-        <div class="card-body">
-            <table id="datatablesSimple" class="table table-striped fs-6">
+
+        <div class="table-responsive">
+            <table id="tablaRoles" class="table align-middle">
                 <thead>
                     <tr>
                         <th>Rol</th>
@@ -79,13 +86,9 @@ Toast.fire({
                     <tr>
                         <td>{{ $item->name }}</td>
                         <td>
-                            <div class="btn-group" role="group" aria-label="Acciones">
-                               <a href="{{ route('roles.edit', ['role' => $item]) }}" class="btn btn-warning">Editar</a>
-                                       
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $item->id }}">
-                                    Eliminar
-                                </button>
-                             
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('roles.edit', ['role' => $item]) }}" class="btn btn-editar btn-sm">Editar</a>
+                                <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $item->id }}">Eliminar</button>
                             </div>
                         </td>
                     </tr>
@@ -95,24 +98,23 @@ Toast.fire({
         </div>
     </div>
 
-
-    {{-- Modales fuera de la tabla --}}
+    {{-- Modales de confirmación --}}
     @foreach ($roles as $item)
-    <div class="modal fade" id="confirmModal-{{ $item->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="confirmModal-{{ $item->id }}" tabindex="-1" aria-labelledby="modalLabel-{{ $item->id }}" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje de confirmación</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <h5 class="modal-title">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    ¿Seguro que quieres eliminar el rol <strong>{{ $item->name }}</strong>?
+                    ¿Seguro que deseas eliminar el rol <strong>{{ $item->name }}</strong>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <form action="{{ route('roles.destroy', ['role' => $item->id]) }}" method="POST">
-                        @method('DELETE')
                         @csrf
+                        @method('DELETE')
                         <button type="submit" class="btn btn-danger">Confirmar</button>
                     </form>
                 </div>
@@ -121,18 +123,35 @@ Toast.fire({
     </div>
     @endforeach
 </div>
+
 @endsection
 
-
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
-<script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-
-{{-- Asegúrate de tener Bootstrap JS cargado --}}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#tablaRoles').DataTable({
+        "scrollY": "400px",
+        "scrollCollapse": true,
+        "paging": true,
+        "language": {
+            "search": "Buscar:",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ roles",
+            "paginate": {
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "zeroRecords": "No se encontraron roles"
+        },
+        "columnDefs": [
+            { "orderable": false, "targets": 1 }
+        ]
+    });
+});
+</script>
 @endpush
-
-
-
-

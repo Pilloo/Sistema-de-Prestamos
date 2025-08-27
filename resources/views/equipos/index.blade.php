@@ -3,84 +3,110 @@
 @section('title','Equipos')
 
 @push('css')
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
-<link href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link rel="stylesheet" href="{{ asset('css/scannerLector.css') }}">
 
 <style>
-    .ContenidoPrincipal {
-        background-color: #f8f9fa;
+    body {
+      background-image: url(img/130.jpg) !important;
+      background-size: cover;
+      background-repeat: no-repeat;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 18px 32px rgba(25, 24, 24, 0.452);
+    }
+    .panel h2 {
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+    .table {
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    thead {
+      background: #f0f2f5;
+    }
+    .badge {
+      font-size: 0.85rem;
+      padding: 0.5em 0.8em;
+      border-radius: 12px;
+    }
+    .btn-sm, .btn {
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    /* Hover bonito en filas */
+    tbody tr:hover {
+      background-color: #f9fafc;
+      transition: background 0.2s;
     }
 
-    #contenedorEquipos {
-        margin-top: 40px;
+    /* Colores personalizados */
+    .btn-agregar{
+        background-color: #1e73be !important;
+        color: #fff !important;
     }
-
-    #contenedorTablaEquipos {
-        max-height: 300px;
-        overflow-y: auto;
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
+    .btn-ver{
+        background-color: #329b46 !important;
+        color: #fff !important;
     }
-
-    #placeholderEquipos {
-        color: #aaa;
+    .btn-editar{
+        background-color: #1e73be !important;
+        color: #fff !important;
+    }
+    .btn-eliminar{
+        background-color: #b85a05 !important;
+        color: #fff !important;
     }
 </style>
-
 @endpush
 
 @section('content')
 
 @if(session('success'))
 <script>
-// Para recuperar el mensaje que quiero que muestre el TOAST
-let message = "{{ session('success') }}";
-
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 1500,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.onmouseenter = Swal.stopTimer;
-    toast.onmouseleave = Swal.resumeTimer;
-  }
-});
-Toast.fire({
-  icon: "success",
-  title: message // ← CORRECTO (sin punto y coma)
+Swal.fire({
+    toast: true,
+    position: "top-end",
+    icon: "success",
+    title: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true
 });
 </script>
 @endif
+
 @if(session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
+<div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<body class="ContenidoPrincipal">
-    <div id="contenedorEquipos" class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="container py-5">
+    <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Listado de Equipos</h2>
             <div class="d-flex gap-2">
                 <a href="{{ route('equipos.create') }}">
-                    <button type="button" class="btn btn-primary">Añadir nuevo registro</button>
+                    <button type="button" class="btn btn-agregar">+ Añadir nuevo registro</button>
                 </a>
-                <button type="button" class="btn btn-primary" onclick="openBarcodeModal()">Búsqueda con lector</button>
+                <button type="button" class="btn btn-editar" onclick="openBarcodeModal()">🔍 Búsqueda con lector</button>
             </div>
         </div>
 
-        <div id="contenedorTablaEquipos">
-            <table id="datatablesSimple" class="table table-striped">
+        <div class="table-responsive">
+            <table id="tablaEquipos" class="table align-middle">
                 <thead>
                     <tr>
-                    <th>#</th>
-                    <th>Equipo</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
+                        <th>#</th>
+                        <th>Equipo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="equipoBody">
@@ -89,25 +115,26 @@ Toast.fire({
                         <td>{{ $item->id }}</td>    
                         <td>{{ $item->lote ? $item->lote->modelo : 'Sin lote' }}</td>
                         <td>
-                            {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}
+                            <span class="badge {{ $item->estado_equipo && $item->estado_equipo->nombre!='Baja / Retirado' ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}
+                            </span>
                         </td>
-
                         <td>
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#verModal{{$index}}">Ver</button>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-ver btn-sm" data-bs-toggle="modal" data-bs-target="#verModal{{$index}}">Ver</button>
                                 <form action="{{ route('equipos.edit', ['equipo' => $item]) }}" method="get">
-                                    <button type="submit" class="btn btn-warning">Editar</button>
+                                    <button type="submit" class="btn btn-editar btn-sm">Editar</button>
                                 </form> 
                                 @if($item->estado_equipo->nombre!='Baja / Retirado')
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Eliminar</button>
+                                    <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Eliminar</button>
                                 @else
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Restaurar</button>
+                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Restaurar</button>
                                 @endif 
                             </div>
                         </td>
                     </tr>
 
-                    <!--Modal detalle-->
+                    <!-- Modal detalle -->
                     <div class="modal fade" id="verModal{{$index}}" tabindex="-1" aria-labelledby="modalLabel{{$index}}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-scrollable">
                             <div class="modal-content">
@@ -116,7 +143,8 @@ Toast.fire({
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                 </div>
                                 <div class="modal-body">
-                                    
+                                    {{-- Aquí podés poner más detalles del equipo --}}
+                                </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                 </div>
@@ -140,19 +168,10 @@ Toast.fire({
                                     <form action="{{ route('equipos.destroy',['equipo'=>$item->id]) }}" method="post">
                                         @method('DELETE')
                                         @csrf
-                                        <button type="submit" class="btn {{ $item->estado_equipo->id != 7 ? 'btn-danger' : 'btn-primary' }}">Confirmar</button>
+                                        <button type="submit" class="btn {{ $item->estado_equipo->id != 7 ? 'btn-eliminar' : 'btn-success' }}">Confirmar</button>
                                     </form>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal para escáner físico -->
-                    <div id="barcodeModal" class="scanner-modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="closeBarcodeModal()">&times;</span>
-                            <h3>Escanear con lector de código</h3>
-                            <input type="text" id="barcodeInput" class="form-control" placeholder="Escanee el código aquí">
                         </div>
                     </div>
 
@@ -161,15 +180,53 @@ Toast.fire({
             </table>
         </div>
     </div>
-</body>
+</div>
+
+<!-- Modal para escáner físico -->
+<div id="barcodeModal" class="scanner-modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeBarcodeModal()">&times;</span>
+        <h3>Escanear con lector de código</h3>
+        <input type="text" id="barcodeInput" class="form-control" placeholder="Escanee el código aquí">
+    </div>
+</div>
 
 @endsection
 
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
-<script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ asset('js/scannerBusqueda.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+  $('#tablaEquipos').DataTable({
+    "scrollY": "400px",
+    "scrollCollapse": true,
+    "paging": true,
+    "language": {
+      "search": "Buscar:",
+      "lengthMenu": "Mostrar _MENU_ registros",
+      "info": "Mostrando _START_ a _END_ de _TOTAL_ equipos",
+      "paginate": {
+        "next": "Siguiente",
+        "previous": "Anterior"
+      },
+      "zeroRecords": "No se encontraron equipos"
+    },
+    "columnDefs": [
+      { "orderable": false, "targets": 3 }
+    ]
+  });
+});
+
+// Funciones para el modal del escáner
+function openBarcodeModal(){
+    document.getElementById("barcodeModal").style.display="block";
+}
+function closeBarcodeModal(){
+    document.getElementById("barcodeModal").style.display="none";
+}
+</script>
 @endpush
