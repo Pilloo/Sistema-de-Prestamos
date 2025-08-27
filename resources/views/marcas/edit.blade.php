@@ -3,11 +3,7 @@
 @section('title', 'Editar Marcas')
 
 @push('css')
-<style>
-    #descripcion{
-        resize: none;
-    }
-</style>
+<link href="{{ asset('css/marcas.css') }}" rel="stylesheet" />
 @endpush
 
 @section('content')

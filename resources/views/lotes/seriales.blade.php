@@ -80,48 +80,7 @@
 @endsection
 
 @push('css')
-<style>
-/* Botón degradado */
-.btn-gradient {
-    background: linear-gradient(45deg, #0d6efd, #6610f2);
-    color: #fff !important;
-    border: none;
-    transition: 0.3s;
-}
-.btn-gradient:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* Cabecera modal degradada */
-.bg-gradient {
-    background: linear-gradient(45deg, #0d6efd, #20c997);
-}
-
-/* Animación fadeIn */
-.animate__animated.animate__fadeIn {
-    animation: fadeIn 0.6s ease-in-out;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Estilo lista */
-#listaSeriales .list-group-item {
-    border: none;
-    background: #f8f9fa;
-    margin-bottom: 6px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    transition: 0.3s;
-}
-#listaSeriales .list-group-item:hover {
-    background: #eef2ff;
-    transform: scale(1.01);
-}
-</style>
+<link href="{{ asset('css/lotes.css') }}" rel="stylesheet" />
 @endpush
 
 @push('js')

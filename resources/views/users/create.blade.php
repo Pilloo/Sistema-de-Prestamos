@@ -5,54 +5,7 @@
 @push('css')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-<style>
-  .form-container {
-    border-radius: 1rem;
-    border: 1px solid #c1c7d0;
-    box-shadow: 0 0 20px rgb(0 0 0 / 0.1);
-    max-width: 800px;
-    width: 100%;
-    padding: 2rem;
-    background-color: white;
-  }
-  .input-editable {
-    background-color: white;
-    font-size: 0.875rem;
-    color: #4b5563;
-    border-radius: 0.375rem;
-    border: 1px solid #d1d5db;
-    padding: 0.5rem 0.75rem;
-    width: 100%;
-  }
-  .btn-custom {
-    padding: 0.4rem 1rem;
-    border: 2px solid #315cfd;
-    border-radius: 30px;
-    background: white;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s;
-    color: #315cfd;
-  }
-  .btn-custom:hover {
-    background: #315cfd;
-    color: white;
-  }
-  .user-icon {
-    background-color: #d1d5db;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem auto;
-  }
-  .user-icon i {
-    font-size: 2.5rem;
-    color: #6b7280;
-  }
-</style>
+<link href="{{ asset('css/users.css') }}" rel="stylesheet" />
 @endpush
 
 @section('content')

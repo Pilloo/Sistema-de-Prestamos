@@ -3,53 +3,7 @@
 @section('title','Lista de usuarios')
 
 @push('css')
-<style>
-    .user-list-container {
-    max-width: 1200px;
-    margin: auto;
-    background: white;
-    border-radius: 1rem;
-    border: 1px solid #c1c7d0;
-    box-shadow: 0 0 20px rgb(0 0 0 / 0.05);
-    overflow: hidden;
-    padding: 2rem;
-    }
-
-    .user-list-header {
-        font-size: 1.5rem;
-        font-weight: 600;
-        text-align: center;
-        padding: 1.5rem 0;
-        border-bottom: 1px solid #e5e7eb;
-        margin-bottom: 1.5rem;
-    }
-
-    .btn-custom {
-        padding: 0.5rem 1rem;
-        border-radius: 30px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.3s;
-    }
-
-    .table tbody {
-        font-size: 1rem;
-    }
-
-    .table thead {
-        position: sticky;
-        top: 0;
-        background-color: #f8f9fa;
-        z-index: 1;
-        font-size: 1.1rem;
-    }
-
-    .table-responsive {
-        max-height: 500px;
-        overflow-y: auto;
-    }
-
-</style>
+<link href="{{ asset('css/users.css') }}" rel="stylesheet" />
 @endpush
 
 @section('content')

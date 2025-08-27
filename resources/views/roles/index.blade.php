@@ -6,48 +6,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="{{ asset('css/roles.css') }}" rel="stylesheet" />
 
-<style>
-    body {
-        background-image: url(img/130.jpg) !important;
-        background-size: cover;
-        background-repeat: no-repeat;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-    .panel {
-        background: #fff;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 18px 32px rgba(25, 24, 24, 0.452);
-    }
-    .panel h2 {
-        font-weight: 700;
-        font-size: 1.4rem;
-    }
-    .table {
-        border-radius: 15px;
-        overflow: hidden;
-    }
-    thead {
-        background: #f0f2f5;
-    }
-    .btn-sm {
-        border-radius: 8px;
-        font-weight: 500;
-    }
-    .btn-agregar {
-        background-color: #1e73be !important;
-        color: #fff !important;
-    }
-    .btn-editar {
-        background-color: #ffc107 !important;
-        color: #000 !important;
-    }
-    .btn-eliminar {
-        background-color: #b85a05 !important;
-        color: #fff !important;
-    }
-</style>
 @endpush
 
 @section('content')

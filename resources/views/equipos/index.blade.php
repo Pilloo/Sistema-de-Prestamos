@@ -7,64 +7,8 @@
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="{{ asset('css/equipos.css') }}" rel="stylesheet" />
 
-<style>
-    body {
-      background-image: url(img/130.jpg) !important;
-      background-size: cover;
-      background-repeat: no-repeat;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-    .panel {
-      background: #fff;
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 18px 32px rgba(25, 24, 24, 0.452);
-    }
-    .panel h2 {
-      font-weight: 700;
-      font-size: 1.4rem;
-    }
-    .table {
-      border-radius: 15px;
-      overflow: hidden;
-    }
-    thead {
-      background: #f0f2f5;
-    }
-    .badge {
-      font-size: 0.85rem;
-      padding: 0.5em 0.8em;
-      border-radius: 12px;
-    }
-    .btn-sm, .btn {
-      border-radius: 8px;
-      font-weight: 500;
-    }
-    /* Hover bonito en filas */
-    tbody tr:hover {
-      background-color: #f9fafc;
-      transition: background 0.2s;
-    }
-
-    /* Colores personalizados */
-    .btn-agregar{
-        background-color: #1e73be !important;
-        color: #fff !important;
-    }
-    .btn-ver{
-        background-color: #329b46 !important;
-        color: #fff !important;
-    }
-    .btn-editar{
-        background-color: #1e73be !important;
-        color: #fff !important;
-    }
-    .btn-eliminar{
-        background-color: #b85a05 !important;
-        color: #fff !important;
-    }
-</style>
 @endpush
 
 @section('content')
