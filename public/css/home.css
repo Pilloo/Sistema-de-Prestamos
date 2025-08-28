@@ -1,11 +1,14 @@
 #homeContent {
-    background-color: #f0f4f8;
+    
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
 }
+body{
+   
+}
 
 .principal {
-    background-color: #ffffff;
+    
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     padding: 30px;

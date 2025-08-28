@@ -41,7 +41,7 @@ Toast.fire({
     <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<body id="homeContent">
+<body id="homeContent" style="background: url('{{ asset('img/template/fondoPrincipal.jpg') }}') no-repeat center center fixed; background-size: cover;">
     <div class="container">
         <div class="card principal mx-auto">
             <div class="card-body">
