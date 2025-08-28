@@ -68,31 +68,6 @@ body {
 }
 
 /* ===== BOTONES ===== */
-.btn {
-    border-radius: 10px;
-    font-weight: 500;
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-}
-.btn-primary {
-    background: linear-gradient(135deg, #1e73be, #3ba7ff) !important;
-    color: #fff !important;
-    border: none;
-}
-.btn-outline-dark {
-    border-radius: 10px;
-    color: #444;
-    border: 1px solid #444;
-    transition: all 0.2s;
-}
-.btn-outline-dark:hover {
-    background: #1e73be;
-    color: #fff;
-    border-color: #1e73be;
-}
 
 /* ===== MODALES ===== */
 .modal {
@@ -140,4 +115,47 @@ body {
 .grande > a:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0,123,255,0.25);
+}
+
+/* ===== BOTONES DE ACCIONES ===== */
+.btn-ver {
+    background-color: #329b46 !important;
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    transition: all 0.2s;
+}
+.btn-ver:hover {
+    background-color: #2a7a38 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(50, 155, 70, 0.3);
+}
+
+.btn-editar {
+    background-color: #1e73be !important;
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    transition: all 0.2s;
+}
+.btn-editar:hover {
+    background-color: #165a94 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 115, 190, 0.3);
+}
+
+.btn-eliminar {
+    background-color: #b85a05 !important;
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    transition: all 0.2s;
+}
+.btn-eliminar:hover {
+    background-color: #943f00 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(184, 90, 5, 0.3);
 }

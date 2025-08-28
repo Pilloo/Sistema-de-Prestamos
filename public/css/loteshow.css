@@ -1,0 +1,158 @@
+/* loteshow.css */
+
+/* Contenedor principal */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Encabezado */
+h3 {
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Card-like styling para la info del lote */
+.row > .col-md-4, .row > .col-md-8 {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Imagen del equipo */
+.img-thumbnail {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Lista de detalles del lote */
+.list-group-item {
+    border: none;
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.list-group-item strong {
+    color: #333333;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+}
+
+/* Botones */
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+    border-color: #545b62;
+}
+
+/* Tabla de equipos */
+table {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+table th, table td {
+    text-align: center;
+    padding: 12px 15px;
+}
+
+table thead {
+    background-color: #0d6efd;
+    color: #ffffff;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+table tbody tr:hover {
+    background-color: #e9ecef;
+    transition: 0.3s;
+}
+
+/* Alertas */
+.alert {
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 500;
+} 
+.table-responsive {
+    max-height: 400px; /* altura máxima antes de hacer scroll vertical */
+    overflow-y: auto;
+    overflow-x: auto; /* scroll horizontal si es necesario */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Tabla */
+/* Contenedor con scroll y sombra */
+.table-responsive {
+    max-height: 400px; /* altura máxima antes de scroll vertical */
+    overflow-y: auto;
+    overflow-x: auto; /* scroll horizontal si hay muchas columnas */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Tabla */
+.table-responsive {
+    max-height: 400px; /* altura máxima antes de scroll vertical */
+    overflow-y: auto;
+    overflow-x: auto; /* scroll horizontal si hay muchas columnas */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Tabla */
+.table {
+    border-radius: 15px;
+    overflow: hidden;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Encabezado */
+thead {
+    background: #f0f2f5;
+    font-weight: 600;
+}
+
+/* Filas */
+tbody tr:hover {
+    background-color: #f9fafc;
+    transition: background 0.2s;
+}

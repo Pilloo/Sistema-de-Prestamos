@@ -36,7 +36,7 @@ Swal.fire({
         </div>
 
         <div class="table-responsive">
-            <table id="tablaLotes" class="table align-middle">
+            <table id="tablaLotes" class="table align-middle ">
                 <thead>
                     <tr>
                         <th>ID</th>

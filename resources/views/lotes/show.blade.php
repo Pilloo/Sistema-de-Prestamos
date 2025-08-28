@@ -1,6 +1,9 @@
 @extends('template')
 
 @section('title', 'Detalle de Lote')
+@push('css')
+<link href="{{ asset('css/loteshow.css') }}" rel="stylesheet" />
+@endpush
 
 @section('content')
 <div class="container py-4">
@@ -37,12 +40,12 @@
                 <li class="list-group-item"><strong>Cantidad Total:</strong> {{ $loteEquipo->cantidad_total }}</li>
                 <li class="list-group-item"><strong>Cantidad Disponible:</strong> {{ $loteEquipo->cantidad_disponible }}</li>
             </ul>
-            <a href="{{ route('lotes.edit', $loteEquipo->id) }}" class="btn btn-warning">Editar</a>
+            <a href="{{ route('lotes.edit', $loteEquipo->id) }}" class="btn btn-primary">Editar</a>
             <a href="{{ route('lotes.index') }}" class="btn btn-secondary">Volver</a>
         </div>
     </div>
-    <div class="mt-4">
-        <h5>Equipos en el lote</h5>
+    <h5>Equipos en el lote</h5>
+    <div class="table-responsive">
         <table class="table table-bordered">
             <thead>
                 <tr>

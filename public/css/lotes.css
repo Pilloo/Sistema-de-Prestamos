@@ -43,15 +43,15 @@ tbody tr:hover {
     color: #fff !important;
 }
 .btn-ver {
-    background-color: #0d6efd !important;
+    background-color: #329b46 !important;
     color: #fff !important;
 }
 .btn-editar {
-    background-color: #ffc107 !important;
-    color: #000 !important;
+    background-color: #1e73be !important;
+    color: #fff !important;
 }
 .btn-eliminar {
-    background-color: #dc3545 !important;
+    background-color: #b85a05  !important;
     color: #fff !important;
 }
 
