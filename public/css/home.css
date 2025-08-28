@@ -1,30 +1,30 @@
 #homeContent {
-    
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
 }
-body{
-    background-image: url("/img/template/fondoPrincipal.jpg") !;
+
+body {
+    background-image: url("/img/template/fondoPrincipal.jpg");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-
 }
 
 .principal {
-    
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    max-width: 700px;
+    padding: 40px;
+    max-width: 1200px; /* más ancho para botones grandes */
     text-align: center;
+    margin: 10vh auto;
 }
 
 .grande {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 botones por fila */
+    justify-items: center;
+    gap: 15px 15px; /* menos espacio entre botones */
 }
 
 .boton {
@@ -32,35 +32,51 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 120px;
-    height: 120px;
+    width: 220px;  /* más ancho */
+    height: 160px; /* más alto */
     background: linear-gradient(135deg, #007bff, #0056b3);
     color: #ffffff;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 20px; /* texto más grande */
     text-decoration: none;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 18px rgba(0, 123, 255, 0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    margin: 10px;
 }
 
 .boton i {
-    font-size: 28px;
-    margin-bottom: 8px;
+    font-size: 36px; /* ícono más grande */
+    margin-bottom: 10px;
 }
 
 .boton:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 18px rgba(0, 123, 255, 0.4);
-    text-decoration: none;
+    box-shadow: 0 12px 22px rgba(0, 123, 255, 0.4);
     color: #e0f0ff;
+    text-decoration: none;
+}
+.titulo-principal {
+    text-align: center;       /* centra horizontalmente */
+    margin-bottom: 20px;      /* espacio entre el título y los botones */
+    font-size: 28px;          /* tamaño del título */
+    font-weight: 600;         /* opcional, más negrita */
+    color: #000000;           /* opcional, mismo color de botones */
+}
+.titulo{
+    margin-top: 5vh;
+    align-items: center;
+    justify-content: center;
 }
 
-.grande > a:nth-child(-n+3) {
-    flex: 0 0 30%;
+/* Responsive: bajan de fila sin cambiar tamaño */
+@media (max-width: 1024px) {
+    .grande {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.grande > a:nth-child(n+4) {
-    flex: 0 0 35%;
+@media (max-width: 480px) {
+    .grande {
+        grid-template-columns: 1fr;
+    }
 }

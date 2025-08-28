@@ -42,10 +42,16 @@ Toast.fire({
 @endif
 
 <body id="homeContent">
+    
     <div class="container">
+        <div class="titulo">
+            <h2 class="titulo-principal">Inicio Técnico</h2>
+        </div>
+       
         <div class="card principal mx-auto">
+            
             <div class="card-body">
-                <h2 class="mb-4">Inicio Técnico</h2>
+                
                 <div class="grande">
                     <a href="{{ auth()->check() ? route('users.show', auth()->user()->id) : '#' }}" class="texto boton">
                         <i class="fas fa-user"></i>
