@@ -1,6 +1,6 @@
 <div class="sidebar">
     <!-- Logo -->
-    <a href="#"><img src="{{ asset('img/template/TI_BN.png') }}" class="logo" alt="logo ti"></a>
+    <a href="{{ url('/') }}"><img src="{{ asset('img/template/TI_BN.png') }}" class="logo" alt="logo ti"></a>
     
 
     <!-- Bienvenida al usuario -->
