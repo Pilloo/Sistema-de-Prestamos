@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SolicitudPrestamo extends Model
 {
     use HasFactory;
+
+    protected $table = 'solicitud_prestamo';
 
     protected $fillable = [
         'fecha_solicitud',
@@ -25,28 +25,43 @@ class SolicitudPrestamo extends Model
         'fecha_limite_solicitada' => 'datetime',
     ];
 
-    public function solicitante(): BelongsTo
+    /**
+     * Get the user who made the request
+     */
+    public function solicitante()
     {
         return $this->belongsTo(User::class, 'id_solicitante');
     }
 
-    public function tecnicoAprobador(): BelongsTo
+    /**
+     * Get the technician who approved the request
+     */
+    public function tecnicoAprobador()
     {
         return $this->belongsTo(User::class, 'id_tecnico_aprobador');
     }
 
-    public function estadoSolicitud(): BelongsTo
+    /**
+     * Get the request status
+     */
+    public function estadoSolicitud()
     {
         return $this->belongsTo(EstadoSolicitud::class, 'id_estado_solicitud');
     }
 
-    public function prestamo(): HasOne
-    {
-        return $this->hasOne(Prestamo::class, 'id_solicitud');
-    }
-
+    /**
+     * Get the equipment lots associated with this request
+     */
     public function equipos()
     {
-        return $this->belongsToMany(Equipo::class, 'equipo_solicitud', 'id_solicitud', 'id_equipo');
+        return $this->belongsToMany(Equipo::class, 'equipo_solicitud', 'id_solicitud', 'id_equipo')->withTimestamps();
+    }
+
+    /**
+     * Get the loan associated with this request
+     */
+    public function prestamo()
+    {
+        return $this->hasOne(Prestamo::class, 'id_solicitud');
     }
 }

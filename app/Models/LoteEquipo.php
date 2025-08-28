@@ -10,6 +10,16 @@ class LoteEquipo extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'modelo',
+        'contenido_etiqueta',
+        'detalle',
+        'marca_id',
+        'img_path',
+        'cantidad_total',
+        'cantidad_disponible'
+    ];
+
     public function equipos()
     {
         return $this->hasMany(Equipo::class);
@@ -25,6 +35,13 @@ class LoteEquipo extends Model
         return $this->belongsTo(Marca::class);
     }
 
+    public function solicitudes()
+    {
+        return $this->belongsToMany(SolicitudPrestamo::class, 'equipo_solicitud', 'id_equipo', 'id_solicitud')
+            ->withPivot('cantidad_solicitada')
+            ->withTimestamps();
+    }
+
     public function handleUploadImage($image)
     {
         $file = $image;
@@ -36,5 +53,33 @@ class LoteEquipo extends Model
         return $name;
     }
 
-    protected $fillable = ['modelo', 'contenido_etiqueta', 'detalle', 'marca_id', 'img_path', 'cantidad_total', 'cantidad_disponible'];
+    /**
+     * Decrease available quantity
+     */
+    public function disminuirCantidad(int $cantidad): bool
+    {
+        if ($this->cantidad_disponible < $cantidad) {
+            return false;
+        }
+
+        $this->cantidad_disponible -= $cantidad;
+        return $this->save();
+    }
+
+    /**
+     * Increase available quantity
+     */
+    public function aumentarCantidad(int $cantidad): bool
+    {
+        $this->cantidad_disponible += $cantidad;
+        return $this->save();
+    }
+
+    /**
+     * Check if there's enough quantity available
+     */
+    public function tieneSuficienteCantidad(int $cantidad): bool
+    {
+        return $this->cantidad_disponible >= $cantidad;
+    }
 }

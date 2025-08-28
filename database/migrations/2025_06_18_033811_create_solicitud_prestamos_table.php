@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('solicitud_prestamos', function (Blueprint $table) {
             $table->id();
+            $table->date('fecha_solicitud');
+            $table->date('fecha_limite_solicitada');
             $table->string('detalle',255);
+            $table->foreignId('id_solicitante')->constrained('users')->onDelete('cascade');
+            $table->foreignId('id_tecnico_aprobador')->nullable()->constrained('users');
+            $table->foreignId('id_estado_solicitud')->constrained('estado_solicitudes');
             $table->timestamps();
         });
     }
