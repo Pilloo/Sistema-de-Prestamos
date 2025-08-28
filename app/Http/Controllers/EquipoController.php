@@ -125,6 +125,38 @@ class EquipoController extends Controller
     }
 
     /**
+     * Vista de inventario agrupado por modelo, marca y categoría
+     */
+    public function inventario()
+    {
+        $lotes = LoteEquipo::with(['marca', 'categorias', 'equipos'])
+            ->get();
+
+        // Agrupar por modelo, marca y categoría
+        $agrupados = collect();
+        foreach ($lotes as $lote) {
+            foreach ($lote->categorias as $categoria) {
+                $key = $lote->modelo . '|' . $lote->marca->nombre . '|' . $categoria->nombre;
+                if (!$agrupados->has($key)) {
+                    $agrupados[$key] = [
+                        'modelo' => $lote->modelo,
+                        'marca' => $lote->marca->nombre,
+                        'categoria' => $categoria->nombre,
+                        'cantidad_total' => 0,
+                        'cantidad_disponible' => 0,
+                        'lotes' => [],
+                    ];
+                }
+                $agrupados[$key]['cantidad_total'] += $lote->cantidad_total;
+                $agrupados[$key]['cantidad_disponible'] += $lote->cantidad_disponible;
+                $agrupados[$key]['lotes'][] = $lote;
+            }
+        }
+
+        return view('equipos.inventario', ['inventario' => $agrupados->values()]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Equipo $equipo)
