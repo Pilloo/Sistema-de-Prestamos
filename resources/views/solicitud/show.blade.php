@@ -38,7 +38,7 @@
             </div>
 
             <h5 class="fw-bold mt-4 mb-3">Equipos Solicitados</h5>
-
+            @can('gestionar solicitudes')
             @if($solicitud->id_estado_solicitud == 1)
             <div class="mb-3">
                 <form action="{{ route('solicitud.aceptar', $solicitud->id) }}" method="POST" class="d-inline">
@@ -51,6 +51,7 @@
                 </form>
             </div>
             @endif
+            @endcan
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
@@ -68,7 +69,7 @@
                             <td>{{ $equipo->id }}</td>
                             <td>{{ $equipo->numero_serie }}</td>
                             <td>{{ $equipo->lote->modelo ?? 'N/A' }}</td>
-                            <td>{{ $equipo->lote->marca->nombre ?? 'N/A' }}</td>
+                            <td>{{ $equipo->lote && $equipo->lote->marca->caracteristica->nombre ? $equipo->lote->marca->caracteristica->nombre : 'Sin marca' }}</td>
                             <td>
                                 <span class="badge bg-secondary">
                                     {{ $equipo->estado_equipo->nombre ?? 'N/A' }}

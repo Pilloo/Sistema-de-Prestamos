@@ -41,6 +41,7 @@ class RegisterController extends Controller
         }
 
         $user = User::create($data);
+        $user->assignRole('invitado');
         Auth::login($user);
         return redirect()->route('home')->with('success', 'Usuario registrado correctamente.');
     }

@@ -60,6 +60,20 @@
     </a>
     @endcan
 
+    <!-- Lotes -->
+    @can('ver lotes')
+    <a href="{{ route('lotes.index')}}" class="texto">
+        <i class="fas fa-boxes-stacked"></i><span class="TextoNav">Lotes</span>
+    </a>
+    @endcan
+
+    <!-- Inventario -->
+    @can('ver inventario')
+    <a href="{{ route('equipos.inventario')}}" class="texto">
+        <i class="fas fa-box-open"></i><span class="TextoNav">Inventario</span>
+    </a>
+    @endcan
+
     <!-- Roles -->
     @can('ver roles')
     <a href="{{ route('roles.index')}}" class="texto">
@@ -88,19 +102,6 @@
     </a>
     @endcan
 
-    <!-- Lotes -->
-    @can('ver lotes')
-    <a href="{{ route('lotes.index')}}" class="texto">
-        <i class="fas fa-boxes-stacked"></i><span class="TextoNav">Lotes</span>
-    </a>
-    @endcan
-
-    <!-- Inventario -->
-    @can('ver inventario')
-    <a href="{{ route('equipos.inventario')}}" class="texto">
-        <i class="fas fa-box-open"></i><span class="TextoNav">Inventario</span>
-    </a>
-    @endcan
     <br>
     
     <!-- Cerrar sesión -->

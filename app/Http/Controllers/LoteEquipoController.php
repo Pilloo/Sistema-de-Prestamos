@@ -55,6 +55,7 @@ class LoteEquipoController extends Controller
     {
         try{
             DB::beginTransaction();
+            dd($request->all());
             $lote_equipo = new LoteEquipo();
             if ($request->hasFile('img_path')){
                 $name = $lote_equipo->handleUploadImage($request->file('img_path'));

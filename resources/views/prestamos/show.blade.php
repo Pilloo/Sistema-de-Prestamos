@@ -43,7 +43,7 @@
                             <td>{{ $equipo->id }}</td>
                             <td>{{ $equipo->numero_serie }}</td>
                             <td>{{ $equipo->lote->modelo ?? 'N/A' }}</td>
-                            <td>{{ $equipo->lote->marca->nombre ?? 'N/A' }}</td>
+                            <td>{{ $equipo->lote && $equipo->lote->marca->caracteristica->nombre ? $equipo->lote->marca->caracteristica->nombre : 'Sin marca' }}</td>
                             <td><span class="badge bg-secondary">{{ $equipo->estado_equipo->nombre ?? 'N/A' }}</span></td>
                         </tr>
                         @empty
