@@ -52,7 +52,22 @@ class RolePermissionSeeder extends Seeder
             'ver departamentos',
             'crear departamentos',
             'editar departamentos',
-            'eliminar departamentos'
+            'eliminar departamentos',
+            'ver lotes',
+            'crear lotes',
+            'editar lotes',
+            'eliminar lotes',
+            'ver inventario',
+            'crear inventario',
+            'editar inventario',
+            'eliminar inventario',
+            'ver solicitudes',
+            'crear solicitudes',
+            'editar solicitudes',
+            'eliminar solicitudes',
+            'ver mis solicitudes',
+            'ver mis prestamos',
+
         ];
 
         foreach ($permisos as $permiso) {

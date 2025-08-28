@@ -9,14 +9,13 @@ class SolicitudPrestamo extends Model
 {
     use HasFactory;
 
-    protected $table = 'solicitud_prestamo';
+    protected $table = 'solicitud_prestamos';
 
     protected $fillable = [
         'fecha_solicitud',
         'fecha_limite_solicitada',
         'detalle',
         'id_solicitante',
-        'id_tecnico_aprobador',
         'id_estado_solicitud'
     ];
 

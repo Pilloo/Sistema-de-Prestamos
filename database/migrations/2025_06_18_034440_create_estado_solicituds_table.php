@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('estado_solicitudes', function (Blueprint $table) {
             $table->id();
-            $table->integer('idCaracteristica')->unique()->constrained('caracteristicas')->onDelete('cascade');
+            $table->string('nombre',60)->unique();
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('estado_solicituds');
+        Schema::dropIfExists('estado_solicitudes');
     }
 };

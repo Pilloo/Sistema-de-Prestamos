@@ -12,6 +12,40 @@ use Illuminate\Support\Facades\Validator;
 class SolicitudPrestamoController extends Controller
 {
     /**
+     * Listar solo las solicitudes del usuario actual
+     */
+    public function misSolicitudes()
+    {
+        $solicitudes = SolicitudPrestamo::with(['solicitante', 'estadoSolicitud'])
+            ->where('id_solicitante', auth()->id())
+            ->orderBy('id', 'desc')
+            ->get();
+        return view('solicitud.index', compact('solicitudes'));
+    }
+
+    /**
+     * Listar todas las solicitudes
+     */
+    public function index()
+    {
+        $solicitudes = SolicitudPrestamo::with(['solicitante', 'estadoSolicitud'])->orderBy('id', 'desc')->get();
+        return view('solicitud.index', compact('solicitudes'));
+    }
+
+    /**
+     * Mostrar el detalle de una solicitud
+     */
+    public function show($id)
+    {
+        $solicitud = SolicitudPrestamo::with([
+            'solicitante',
+            'estadoSolicitud',
+            'equipos.lote.marca',
+            'equipos.estado_equipo'
+        ])->findOrFail($id);
+        return view('solicitud.show', compact('solicitud'));
+    }
+    /**
      * Show equipment selection page (Blade view)
      */
     public function create()
@@ -40,7 +74,7 @@ class SolicitudPrestamoController extends Controller
     public function addToCart(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'lote_id' => 'required|exists:lote_equipo,id',
+            'lote_id' => 'required|exists:lote_equipos,id',
             'cantidad' => 'required|integer|min:1',
             'fecha_limite' => 'required|date|after:today'
         ]);
@@ -176,13 +210,9 @@ class SolicitudPrestamoController extends Controller
                 foreach ($cart as $item) {
                     $lote = LoteEquipo::findOrFail($item['lote_id']);
 
-                    $equipos = $lote->equipos()->whereDoesntHave('solicitudes')->limit($item['cantidad']);
-
-                    // Attach the lot to the request
-                    $solicitud->equipos()->attach($equipos);
-
-                    // Decrease the available quantity
-                    $lote->decrement('cantidad_disponible', $item['cantidad']);
+                    $equipos = $lote->equipos()->whereDoesntHave('prestamos')->limit($item['cantidad'])->get();
+                    $solicitud->equipos()->attach($equipos->pluck('id')->toArray());
+                    // NO disminuir cantidad_disponible aquí
                 }
             });
 
@@ -197,6 +227,72 @@ class SolicitudPrestamoController extends Controller
                 ->with('error', 'Error al procesar la solicitud: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Aceptar solicitud de préstamo
+     */
+    public function aceptar($id)
+    {
+        $solicitud = SolicitudPrestamo::with(['equipos.lote'])->findOrFail($id);
+
+        if ($solicitud->id_estado_solicitud != 1) {
+            return redirect()->back()->with('error', 'La solicitud ya fue procesada.');
+        }
+
+        DB::transaction(function () use ($solicitud) {
+            // Cambiar estado a aceptada (por ejemplo, 2)
+            $solicitud->update([
+                'id_estado_solicitud' => 2, // aceptada
+                'id_tecnico_aprobador' => auth()->id()
+            ]);
+
+            // Obtener el id del estado "En préstamo"
+            $estadoEnPrestamo = \App\Models\EstadoEquipo::where('nombre', 'En préstamo')->first();
+
+            // Disminuir cantidad disponible de cada lote y cambiar estado de equipo
+            foreach ($solicitud->equipos as $equipo) {
+                $lote = $equipo->lote;
+                if ($lote) {
+                    $lote->decrement('cantidad_disponible', 1);
+                }
+                if ($estadoEnPrestamo) {
+                    $equipo->estado_equipo_id = $estadoEnPrestamo->id;
+                    $equipo->save();
+                }
+            }
+
+            // Crear el préstamo asociado
+            $estadoPrestamo = \App\Models\EstadoPrestamo::where('nombre', 'Prestado / Entregado')->first();
+            \App\Models\Prestamo::create([
+                'id_solicitante' => $solicitud->id_solicitante,
+                'id_aprobador' => auth()->id(),
+                'id_estado_prestamo' => $estadoPrestamo ? $estadoPrestamo->id : null,
+                'id_solicitud' => $solicitud->id
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Solicitud aceptada correctamente.');
+    }
+
+    /**
+     * Rechazar solicitud de préstamo
+     */
+    public function rechazar($id)
+    {
+        $solicitud = SolicitudPrestamo::findOrFail($id);
+
+        if ($solicitud->id_estado_solicitud != 1) {
+            return redirect()->back()->with('error', 'La solicitud ya fue procesada.');
+        }
+
+        $solicitud->update([
+            'id_estado_solicitud' => 3, // rechazada
+            'id_tecnico_aprobador' => auth()->id()
+        ]);
+
+        return redirect()->back()->with('success', 'Solicitud rechazada correctamente.');
+    }
+    
 
     /**
      * Clear the entire cart

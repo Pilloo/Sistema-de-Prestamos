@@ -42,6 +42,7 @@ class CategoriaController extends Controller
             $caracteristica->categoria()->create([
                 'caracteristica_id' => $caracteristica->id
             ]);
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

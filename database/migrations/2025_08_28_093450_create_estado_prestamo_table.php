@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prestamos', function (Blueprint $table) {
+    Schema::create('estado_prestamos', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre',60)->unique();
             $table->timestamps();
         });
     }
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prestamos');
+    Schema::dropIfExists('estado_prestamos');
     }
 };

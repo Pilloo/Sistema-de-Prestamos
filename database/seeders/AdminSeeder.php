@@ -32,6 +32,9 @@ class AdminSeeder extends Seeder
                 'ver equipos', 'crear equipos', 'editar equipos', 'eliminar equipos',
                 'ver prestamos', 'crear prestamos', 'editar prestamos', 'eliminar prestamos',
                 'ver lotes', 'crear lotes', 'editar lotes', 'eliminar lotes',
+                'ver inventario', 'crear inventario', 'editar inventario', 'eliminar inventario',
+                'ver solicitudes', 'crear solicitudes', 'editar solicitudes', 'eliminar solicitudes',
+                'ver mis solicitudes', 'ver mis prestamos',
             ];
             foreach ($defaultPermissions as $perm) {
                 Permission::firstOrCreate(['name' => $perm]);
