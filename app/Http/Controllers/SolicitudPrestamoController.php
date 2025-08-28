@@ -4,160 +4,208 @@ namespace App\Http\Controllers;
 
 use App\Models\SolicitudPrestamo;
 use App\Models\LoteEquipo;
-use App\Models\Equipo;
-use App\Http\Requests\StoreSolicitudPrestamoRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use App\Models\EstadoSolicitud;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class SolicitudPrestamoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Show equipment selection page (Blade view)
      */
-    public function index(): View
+    public function create()
     {
-        $solicitudes = SolicitudPrestamo::with(['estadoSolicitud', 'lotes.marca'])
-            ->where('id_solicitante', Auth::id())
-            ->orderBy('fecha_solicitud', 'desc')
+        $equipmentLots = LoteEquipo::with(['marca', 'categorias'])
+            ->where('cantidad_disponible', '>', 0)
             ->get();
 
-        return view('solicitud-prestamo.index', compact('solicitudes'));
+        return view('solicitud.create', compact('equipmentLots'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show shopping cart page
      */
-    public function create(): View
+    public function cart()
     {
-        $lotes = LoteEquipo::with(['marca', 'categoria'])
-            ->where('cantidad', '>', 0)
-            ->where('disponible', true)
-            ->get();
+        // Get cart from session
+        $cart = session()->get('equipment_cart', []);
 
-        return view('solicitud-prestamo.create', compact('lotes'));
+        return view('solicitud.cart', compact('cart'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Add item to cart (session)
      */
-    public function store(StoreSolicitudPrestamoRequest $request): RedirectResponse
+    public function addToCart(Request $request)
     {
-        DB::beginTransaction();
+        $validator = Validator::make($request->all(), [
+            'lote_id' => 'required|exists:lote_equipo,id',
+            'cantidad' => 'required|integer|min:1',
+            'fecha_limite' => 'required|date|after:today'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $lote = LoteEquipo::findOrFail($request->lote_id);
+
+        // Check availability
+        if ($lote->cantidad_disponible < $request->cantidad) {
+            return redirect()->back()
+                ->with('error', 'No hay suficiente cantidad disponible en el lote seleccionado.');
+        }
+
+        // Get current cart
+        $cart = session()->get('equipment_cart', []);
+
+        // Check if item already in cart
+        $existingIndex = collect($cart)->search(function ($item) use ($request) {
+            return $item['lote_id'] == $request->lote_id;
+        });
+
+        if ($existingIndex !== false) {
+            // Update existing item
+            $cart[$existingIndex]['cantidad'] = $request->cantidad;
+            $cart[$existingIndex]['fecha_limite'] = $request->fecha_limite;
+        } else {
+            // Add new item
+            $cart[] = [
+                'lote_id' => $request->lote_id,
+                'modelo' => $lote->modelo,
+                'marca' => $lote->marca->nombre,
+                'categoria' => $lote->categorias->first()->nombre ?? 'Sin categoría',
+                'cantidad' => $request->cantidad,
+                'fecha_limite' => $request->fecha_limite,
+                'max_disponible' => $lote->cantidad_disponible
+            ];
+        }
+
+        session()->put('equipment_cart', $cart);
+
+        return redirect()->route('solicitud.cart')
+            ->with('success', 'Equipo agregado al carrito correctamente.');
+    }
+
+    /**
+     * Remove item from cart
+     */
+    public function removeFromCart($index)
+    {
+        $cart = session()->get('equipment_cart', []);
+
+        if (isset($cart[$index])) {
+            unset($cart[$index]);
+            session()->put('equipment_cart', array_values($cart)); // Reindex array
+        }
+
+        return redirect()->route('solicitud.cart')
+            ->with('success', 'Equipo removido del carrito.');
+    }
+
+    /**
+     * Update cart item
+     */
+    public function updateCart(Request $request, $index)
+    {
+        $cart = session()->get('equipment_cart', []);
+
+        if (!isset($cart[$index])) {
+            return redirect()->route('solicitud.cart')
+                ->with('error', 'Ítem no encontrado en el carrito.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'cantidad' => 'required|integer|min:1|max:' . $cart[$index]['max_disponible'],
+            'fecha_limite' => 'required|date|after:today'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('solicitud.cart')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $cart[$index]['cantidad'] = $request->cantidad;
+        $cart[$index]['fecha_limite'] = $request->fecha_limite;
+
+        session()->put('equipment_cart', $cart);
+
+        return redirect()->route('solicitud.cart')
+            ->with('success', 'Carrito actualizado correctamente.');
+    }
+
+    /**
+     * Submit the loan request
+     */
+    public function store(Request $request)
+    {
+        $cart = session()->get('equipment_cart', []);
+
+        if (empty($cart)) {
+            return redirect()->route('solicitud.cart')
+                ->with('error', 'El carrito está vacío.');
+        }
+
+        // Validate all items in cart
+        foreach ($cart as $index => $item) {
+            $lote = LoteEquipo::find($item['lote_id']);
+
+            if (!$lote || $lote->cantidad_disponible < $item['cantidad']) {
+                return redirect()->route('solicitud.cart')
+                    ->with('error', "El lote {$item['modelo']} ya no tiene suficiente cantidad disponible.");
+            }
+        }
 
         try {
-            // Create the loan request
-            $solicitud = SolicitudPrestamo::create([
-                'fecha_solicitud' => $request->fecha_solicitud,
-                'fecha_limite_solicitada' => $request->fecha_limite_solicitada,
-                'detalle' => $request->detalle,
-                'id_solicitante' => Auth::id(),
-                'id_tecnico_aprobador' => null,
-                'id_estado_solicitud' => 1 // "En espera"
-            ]);
-
-            // Process each lot with quantity and return date
-            foreach ($request->lotes as $loteData) {
-                $loteId = $loteData['id_lote'];
-                $cantidadSolicitada = $loteData['cantidad'];
-                $fechaDevolucion = $loteData['fecha_devolucion'];
-
-                // Get the lot
-                $lote = LoteEquipo::findOrFail($loteId);
-
-                // Check if requested quantity is available
-                if ($lote->cantidad < $cantidadSolicitada) {
-                    throw new \Exception("Cantidad solicitada no disponible para el lote: " . $lote->modelo);
-                }
-
-                // Attach lot with pivot data
-                $solicitud->lotes()->attach($loteId, [
-                    'cantidad' => $cantidadSolicitada,
-                    'fecha_devolucion' => $fechaDevolucion
+            DB::transaction(function () use ($cart, $request) {
+                // Create the loan request
+                $solicitud = SolicitudPrestamo::create([
+                    'id_solicitante' => auth()->id(),
+                    'fecha_solicitud' => now(),
+                    'fecha_limite_solicitada' => $cart[0]['fecha_limite'], // Use first item's due date
+                    'detalle' => $request->detalle ?? 'Solicitud de préstamo de equipos',
+                    'id_estado_solicitud' => 1, // pendiente
+                    'id_tecnico_aprobador' => null
                 ]);
 
-                // Update lot quantity
-                $lote->decrement('cantidad', $cantidadSolicitada);
+                // Process each equipment lot
+                foreach ($cart as $item) {
+                    $lote = LoteEquipo::findOrFail($item['lote_id']);
 
-                // If lot is now empty, mark as unavailable
-                if ($lote->cantidad === 0) {
-                    $lote->update(['disponible' => false]);
+                    $equipos = $lote->equipos()->whereDoesntHave('solicitudes')->limit($item['cantidad']);
+
+                    // Attach the lot to the request
+                    $solicitud->equipos()->attach($equipos);
+
+                    // Decrease the available quantity
+                    $lote->decrement('cantidad_disponible', $item['cantidad']);
                 }
-            }
+            });
 
-            DB::commit();
+            // Clear the cart
+            session()->forget('equipment_cart');
 
-            Session::flash('success', 'Solicitud de préstamo creada exitosamente');
-            return redirect()->route('solicitud-prestamo.show', $solicitud->id);
+            return redirect()->route('solicitud.create')
+                ->with('success', 'Solicitud de préstamo enviada correctamente.');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-
-            Session::flash('error', 'Error al crear la solicitud de préstamo: ' . $e->getMessage());
-            return redirect()->back()->withInput();
+            return redirect()->route('solicitud.cart')
+                ->with('error', 'Error al procesar la solicitud: ' . $e->getMessage());
         }
     }
 
     /**
-     * Display the specified resource.
+     * Clear the entire cart
      */
-    public function show(string $id): View
+    public function clearCart()
     {
-        $solicitud = SolicitudPrestamo::with([
-            'estadoSolicitud',
-            'lotes.marca',
-            'lotes.categoria'
-        ])->findOrFail($id);
+        session()->forget('equipment_cart');
 
-        // Ensure user can only see their own requests
-        if ($solicitud->id_solicitante !== Auth::id()) {
-            abort(403, 'No tienes permiso para ver esta solicitud');
-        }
-
-        return view('solicitud-prestamo.show', compact('solicitud'));
+        return redirect()->route('solicitud.create')
+            ->with('success', 'Carrito vaciado correctamente.');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id): RedirectResponse
-    {
-        $solicitud = SolicitudPrestamo::with(['lotes'])->findOrFail($id);
-
-        // Ensure user can only delete their own pending requests
-        if ($solicitud->id_solicitante !== Auth::id() || $solicitud->id_estado_solicitud !== 1) {
-            abort(403, 'No puedes eliminar esta solicitud');
-        }
-
-        DB::beginTransaction();
-
-        try {
-            // Restore quantities to lots
-            foreach ($solicitud->lotes as $lote) {
-                $cantidadPrestada = $lote->pivot->cantidad;
-                $lote->increment('cantidad', $cantidadPrestada);
-
-                // Mark lot as available again
-                if ($lote->cantidad > 0) {
-                    $lote->update(['disponible' => true]);
-                }
-            }
-
-            // Delete the request (this will also delete pivot records due to cascade)
-            $solicitud->delete();
-
-            DB::commit();
-
-            Session::flash('success', 'Solicitud de préstamo eliminada exitosamente');
-            return redirect()->route('solicitud-prestamo.index');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            Session::flash('error', 'Error al eliminar la solicitud de préstamo: ' . $e->getMessage());
-            return redirect()->back();
-        }
-    }
-}F
+}
