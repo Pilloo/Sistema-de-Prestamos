@@ -43,8 +43,6 @@ Swal.fire({
                         <th>Modelo</th>
                         <th>Marca</th>
                         <th>Categorías</th>
-                        <th>Total</th>
-                        <th>Disponible</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -61,8 +59,6 @@ Swal.fire({
                                 <span class="badge bg-secondary">{{ $categoria->caracteristica->nombre }}</span>
                             @endforeach
                         </td>
-                        <td>{{ $lote->cantidad_total }}</td>
-                        <td>{{ $lote->cantidad_disponible }}</td>
                         <td>
                             <a href="{{ route('lotes.show', $lote->id) }}" class="btn btn-sm btn-ver">Ver</a>
                             <a href="{{ route('lotes.edit', $lote->id) }}" class="btn btn-sm btn-editar">Editar</a>
@@ -104,7 +100,7 @@ $(document).ready(function() {
             "zeroRecords": "No se encontraron lotes"
         },
         "columnDefs": [
-            { "orderable": false, "targets": 6 }
+            { "orderable": false, "targets": 4 }
         ]
     });
 });

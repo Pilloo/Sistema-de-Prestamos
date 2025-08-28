@@ -38,7 +38,6 @@
                     @endforeach
                 </li>
                 <li class="list-group-item"><strong>Cantidad Total:</strong> {{ $loteEquipo->cantidad_total }}</li>
-                <li class="list-group-item"><strong>Cantidad Disponible:</strong> {{ $loteEquipo->cantidad_disponible }}</li>
             </ul>
             <a href="{{ route('lotes.edit', $loteEquipo->id) }}" class="btn btn-primary">Editar</a>
             <a href="{{ route('lotes.index') }}" class="btn btn-secondary">Volver</a>
