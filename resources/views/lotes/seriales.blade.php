@@ -1,5 +1,9 @@
 @extends('template')
 
+@push('css')
+<link href="{{ asset('css/lotes.css') }}" rel="stylesheet" />
+@endpush
+
 @section('content')
 <div class="container py-5">
     <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeIn">
@@ -79,9 +83,6 @@
 </div>
 @endsection
 
-@push('css')
-<link href="{{ asset('css/lotes.css') }}" rel="stylesheet" />
-@endpush
 
 @push('js')
 <script>
