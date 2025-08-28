@@ -47,7 +47,7 @@ Toast.fire({
             <div class="card-body">
                 <h2 class="mb-4">Inicio Técnico</h2>
                 <div class="grande">
-                    <a href="#perfil" class="boton">
+                    <a href="{{ auth()->check() ? route('users.show', auth()->user()->id) : '#' }}" class="texto boton">
                         <i class="fas fa-user"></i>
                         Perfil
                     </a>

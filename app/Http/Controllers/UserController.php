@@ -82,7 +82,8 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::with(['departamento.caracteristica', 'seccion.caracteristica'])->findOrFail($id);
+        return view('users.show', compact('user'));
     }
 
     /**
