@@ -1,10 +1,10 @@
-/* Navigation Menu */
+/* Wrapper principal */
 .wrapper {
   display: flex;
   min-height: 100vh;
-  overflow: hidden;
 }
 
+/* Sidebar */
 .sidebar {
   width: 90px;
   background-color: #343a40;
@@ -14,6 +14,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
   position: relative;
   z-index: 2;
 }
@@ -24,21 +25,13 @@
   padding-left: 1rem;
 }
 
-.sidebar img.logo {
-  width: 100%;
-  max-width: 60px;
-  margin-bottom: 2rem;
-  transition: all 0.3s ease;
-}
+/* Logo fijo */
 
-.sidebar:hover img.logo {
-  max-width: 100%;
-}
 
+/* Ítems de navegación */
 .sidebar .texto {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
   color: white;
   text-decoration: none;
   font-size: 1.2rem;
@@ -46,17 +39,23 @@
   width: 100%;
   white-space: nowrap;
   transition: background 0.2s;
+  overflow: hidden;
 }
 
 .sidebar .texto i {
   font-size: 1.6rem;
+  flex-shrink: 0;
 }
 
+/* Texto oculto inicialmente */
 .sidebar .texto span {
   opacity: 0;
-  transition: opacity 0.2s ease;
+  margin-left: 0.7rem;
+  transition: opacity 0.3s ease;
+  flex-grow: 1;
 }
 
+/* Mostrar texto cuando sidebar está expandida */
 .sidebar:hover .texto span {
   opacity: 1;
 }
@@ -66,19 +65,23 @@
   border-radius: 0.5rem;
 }
 
+/* Main content */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
+/* Contenido */
 .contenido {
   flex-grow: 1;
   padding: 2rem;
   background-color: #fff;
+  overflow-y: auto;
 }
 
+/* Footer */
 .footer {
   background-color: #343a40;
   color: white;
@@ -90,20 +93,19 @@
   gap: 1rem;
   flex-wrap: wrap;
   font-size: 1.1rem;
+  position: relative;
+  z-index: 1;
 }
 
-.footer .logo {
-  height: 40px;
-  object-fit: contain;
-}
-
-
-/* estilos para navegarion header */
+/* Topbar */
 .topbar-wrapper {
-  padding-top: 1.5rem;
-  background-color: white;
-  font-family: Arial, sans-serif;
-  padding-bottom: 3rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .topbar-wrapper .search-container {
@@ -113,91 +115,38 @@
   gap: 1rem;
   flex-wrap: wrap;
   padding: 1rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  z-index: 1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 }
 
-.topbar-wrapper .search-bar {
-  background-color: #4b4b4b;
-  border-radius: 50px;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  max-width: 500px;
+.topbar-wrapper .search-container::-webkit-scrollbar {
+  height: 6px;
 }
 
-.topbar-wrapper .search-input {
-  background-color: transparent;
-  border: none;
-  color: white;
-  font-size: 1rem;
-  outline: none;
-  box-shadow: none;
-  flex-grow: 1;
-}
-
-.topbar-wrapper .search-input::placeholder {
-  color: white;
-  opacity: 1;
-}
-
-.topbar-wrapper .btn-filter {
-  padding: 0.4rem 1rem;
-  border: 2px solid #4b4b4b;
-  border-radius: 30px;
-  background: white;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s;
-  color: #4b4b4b;
-}
-
-.topbar-wrapper .btn-filter:hover {
-  background: #4b4b4b;
-  color: white;
-}
-
-.topbar-wrapper .cart-icon {
-  position: relative;
-  font-size: 2rem;
-  color: black;
-  cursor: pointer;
-}
-
-.topbar-wrapper .cart-badge {
-  position: absolute;
-  top: -6px;
-  right: -8px;
-  background-color: #c75a00;
-  color: white;
-  font-size: 0.7rem;
-  font-weight: 600;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 576px) {
-  .topbar-wrapper .search-container {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
+.topbar-wrapper .search-container::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 3px;
 }
 
 .topbar-wrapper .content {
-  margin-top: 120px;
+  margin-top: 100px;
   padding: 1rem;
+  overflow-y: auto;
+}
+/* Contenedor del logo */
+.logo-container {
+  width: 90px;            /* fijo como el sidebar cerrado */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
-.topbar-wrapper .h2 {
-  text-align: center;
+/* Imagen del logo */
+.logo {
+  width: 60px;            /* tamaño fijo */
+  height: auto;           /* respeta proporciones */
+  flex-shrink: 0;         /* evita que se reduzca o estire */
+}
+.sidebar:hover .logo-container {
+  width: 90px;  /* se mantiene igual aunque sidebar crezca */
 }

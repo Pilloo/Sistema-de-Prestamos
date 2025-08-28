@@ -46,9 +46,11 @@ Swal.fire({
                     <tr>
                         <td>{{ $item->name }}</td>
                         <td>
-                            <div class="btn-group" role="group">
+                            <div class="d-flex gap-2">
                                 <a href="{{ route('roles.edit', ['role' => $item]) }}" class="btn btn-editar btn-sm">Editar</a>
-                                <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $item->id }}">Eliminar</button>
+                                <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $item->id }}">
+                                    Eliminar
+                                </button>
                             </div>
                         </td>
                     </tr>
