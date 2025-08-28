@@ -36,9 +36,6 @@ Swal.fire({
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Listado de Equipos</h2>
             <div class="d-flex gap-2">
-                <a href="{{ route('equipos.create') }}">
-                    <button type="button" class="btn btn-agregar">+ Añadir nuevo registro</button>
-                </a>
                 <button type="button" class="btn btn-editar" onclick="openBarcodeModal()">🔍 Búsqueda con lector</button>
             </div>
         </div>
@@ -65,7 +62,7 @@ Swal.fire({
                         </td>
                         <td>
                             <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-ver btn-sm" data-bs-toggle="modal" data-bs-target="#verModal{{$index}}">Ver</button>
+                                <a href="{{ route('equipos.show', $item->id) }}" class="btn btn-ver btn-sm">Ver</a>
                                 <form action="{{ route('equipos.edit', ['equipo' => $item]) }}" method="get">
                                     <button type="submit" class="btn btn-editar btn-sm">Editar</button>
                                 </form> 
@@ -78,23 +75,7 @@ Swal.fire({
                         </td>
                     </tr>
 
-                    <!-- Modal detalle -->
-                    <div class="modal fade" id="verModal{{$index}}" tabindex="-1" aria-labelledby="modalLabel{{$index}}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalLabel{{$index}}">Detalle del Equipo</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                </div>
-                                <div class="modal-body">
-                                    {{-- Aquí podés poner más detalles del equipo --}}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- Modal de confirmación eliminar/restaurar -->
                     <div class="modal fade" id="confirmModal-{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
