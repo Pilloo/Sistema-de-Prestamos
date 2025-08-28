@@ -120,7 +120,8 @@ class EquipoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $equipo = Equipo::with(['estado_equipo', 'lote.marca', 'lote.categorias'])->findOrFail($id);
+        return view('equipos.show', compact('equipo'));
     }
 
     /**

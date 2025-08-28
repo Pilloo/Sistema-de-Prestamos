@@ -41,7 +41,7 @@ Toast.fire({
     <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<body id="homeContent" style="background: url('{{ asset('img/template/fondoPrincipal.jpg') }}') no-repeat center center fixed; background-size: cover;">
+<body id="homeContent">
     <div class="container">
         <div class="card principal mx-auto">
             <div class="card-body">
@@ -51,7 +51,7 @@ Toast.fire({
                         <i class="fas fa-user"></i>
                         Perfil
                     </a>
-                    <a href="#usuarios" class="boton">
+                    <a href="{{ route('users.index')}}" class="texto boton">
                         <i class="fas fa-users"></i>
                         Usuarios
                     </a>
@@ -63,9 +63,13 @@ Toast.fire({
                         <i class="fas fa-clipboard-list"></i>
                         Préstamos
                     </a>
-                    <a href="#inventario" class="boton">
+                    <a href="{{ route('lotes.index')}}" class="texto boton">
                         <i class="fa-solid fa-boxes-stacked"></i>
                         Inventario
+                    </a>
+                    <a href="{{ route('equipos.index')}}" class="texto boton">
+                        <i class="fa-solid fa-laptop"></i>
+                        Activos
                     </a>
                 </div>
             </div>
