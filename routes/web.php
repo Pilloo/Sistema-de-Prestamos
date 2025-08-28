@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SolicitudPrestamoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\MarcaController;
@@ -42,3 +43,13 @@ Route::middleware('auth')->group(function () {
     ]);
 });
 
+Route::middleware(['auth'])->group(function () {
+    // Equipment selection and cart routes
+    Route::get('/solicitud/create', [SolicitudPrestamoController::class, 'create'])->name('solicitud.create');
+    Route::get('/solicitud/cart', [SolicitudPrestamoController::class, 'cart'])->name('solicitud.cart');
+    Route::post('/solicitud/add-to-cart', [SolicitudPrestamoController::class, 'addToCart'])->name('solicitud.addToCart');
+    Route::delete('/solicitud/remove-from-cart/{index}', [SolicitudPrestamoController::class, 'removeFromCart'])->name('solicitud.removeFromCart');
+    Route::patch('/solicitud/update-cart/{index}', [SolicitudPrestamoController::class, 'updateCart'])->name('solicitud.updateCart');
+    Route::post('/solicitud/store', [SolicitudPrestamoController::class, 'store'])->name('solicitud.store');
+    Route::get('/solicitud/clear-cart', [SolicitudPrestamoController::class, 'clearCart'])->name('solicitud.clearCart');
+});
