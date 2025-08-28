@@ -55,6 +55,10 @@ Toast.fire({
                         <i class="fas fa-users"></i>
                         Usuarios
                     </a>
+                    <a href="{{ route('roles.index')}}" class="texto boton">
+                        <i class="fa-solid fa-address-book"></i>
+                        Roles
+                    </a>
                     <a href="#solicitudes" class="boton">
                         <i class="fa-solid fa-circle-question"></i>
                         Solicitudes
