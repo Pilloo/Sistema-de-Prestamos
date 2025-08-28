@@ -16,11 +16,11 @@ class SolicitudPrestamoController extends Controller
      */
     public function create()
     {
-        $equipmentLots = LoteEquipo::with(['marca', 'categorias'])
+        $equipos = LoteEquipo::with(['marca', 'categorias'])
             ->where('cantidad_disponible', '>', 0)
             ->get();
 
-        return view('solicitud.create', compact('equipmentLots'));
+        return view('solicitud.create', compact('equipos'));
     }
 
     /**

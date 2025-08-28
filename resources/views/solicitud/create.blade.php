@@ -1,3 +1,14 @@
+@extends('template')
+@section('content')
+<div class="container mt-4">
+    <h2>Solicitar Préstamo de Equipos</h2>
+    <div class="mb-3">
+        <h5>Carrito de equipos</h5>
+        <a href="{{ route('solicitud.cart') }}" class="btn btn-secondary">Ver Carrito</a>
+    </div>
+</div>
+<!-- El flujo de agregar al carrito ahora es mediante el modal y el backend -->
+@endsection
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,7 +170,7 @@
         </div>
 
         <div class="d-flex justify-content-center gap-4 flex-wrap" id="equipmentContainer">
-            @foreach($equipmentLots as $equipment)
+            @foreach($equipos as $equipment)
             <div class="card-custom product-card">
                 <img src="{{ $equipment->img_path ?? 'https://storage.googleapis.com/a1aa/image/c7d51ac1-0253-48bc-7020-40fff88aee8a.jpg' }}" alt="{{ $equipment->modelo }}">
                 <div class="product-card-content">

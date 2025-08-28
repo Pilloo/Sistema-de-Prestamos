@@ -17,7 +17,6 @@ return new class extends Migration
             $table->date('fecha_limite_solicitada');
             $table->string('detalle',255);
             $table->foreignId('id_solicitante')->constrained('users')->onDelete('cascade');
-            $table->foreignId('id_tecnico_aprobador')->nullable()->constrained('users');
             $table->foreignId('id_estado_solicitud')->constrained('estado_solicitudes');
             $table->timestamps();
         });
