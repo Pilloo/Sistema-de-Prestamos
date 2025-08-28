@@ -112,7 +112,7 @@
 
                         <!-- Botones -->
                         <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
-                            <a href="{{ route('equipos.index') }}" class="btn btn-outline-secondary px-4">Cancelar</a>
+                            <a href="{{ route('lotes.index')}}" class="btn btn-outline-secondary px-4">Cancelar</a>
                             <button type="button" class="btn btn-outline-dark px-4" onclick="openModal()"><i class="bi bi-camera"></i> Escanear con cámara</button>
                             <button type="button" class="btn btn-outline-dark px-4" onclick="openBarcodeModal()"><i class="bi bi-upc-scan"></i> Escanear con lector</button>
                             <button type="submit" class="btn btn-primary px-5">Guardar</button>

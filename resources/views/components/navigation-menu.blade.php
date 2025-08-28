@@ -10,7 +10,7 @@
     </a>
 
     <!-- Enlaces principales -->
-    <a href="#" class="texto">
+    <a href="{{ auth()->check() ? route('users.show', auth()->user()->id) : '#' }}" class="texto">
         <i class="bi bi-person"></i><span class="TextoNav">Perfil</span>
     </a>
 
@@ -27,7 +27,6 @@
     </a>
     @endcan
 
-    <!-- Gestión de objetos -->
     @can('ver categorias')
     <a href="{{ route('categorias.index')}}" class="texto">
         <i class="bi bi-list-columns-reverse"></i><span class="TextoNav">Categorías</span>
