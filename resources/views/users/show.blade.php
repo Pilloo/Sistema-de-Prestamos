@@ -1,7 +1,7 @@
 @extends('template')
 
 @section('content')
-<div class="container d-flex justify-content-center align-items-center min-vh-100 p-4">
+<div class="container d-flex justify-content-center align-items-start p-4" style="margin-top: 50px;">
     <div class="user-card mx-auto">
         <div class="d-flex align-items-center mb-4">
             <div class="avatar-bg me-4">
