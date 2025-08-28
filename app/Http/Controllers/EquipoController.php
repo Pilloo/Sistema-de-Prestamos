@@ -125,6 +125,46 @@ class EquipoController extends Controller
     }
 
     /**
+     * Vista de inventario agrupado por modelo, marca y categoría
+     */
+    public function inventario()
+    {
+        $lotes = LoteEquipo::with(['marca', 'categorias', 'equipos'])->get();
+        
+        $agrupados = [];
+        foreach ($lotes as $lote) {
+            foreach ($lote->categorias as $categoria) {
+                $key = $lote->modelo . '|' . $lote->marca->nombre . '|' . $categoria->nombre;
+                if (!isset($agrupados[$key])) {
+                    $agrupados[$key] = [
+                        'modelo' => $lote->modelo,
+                        'marca' => $lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : 'Sin marca',
+                        'categoria' => $categoria->nombre,
+                        'cantidad_total' => 0,
+                        'cantidad_disponible' => 0,
+                        'lotes' => [],
+                        'lote_ids' => [],
+                    ];
+                }
+                // Solo sumar si el lote no ha sido agregado antes a este grupo
+                if (!in_array($lote->id, $agrupados[$key]['lote_ids'])) {
+                    $agrupados[$key]['cantidad_total'] += $lote->cantidad_total;
+                    $agrupados[$key]['cantidad_disponible'] += $lote->cantidad_disponible;
+                    $agrupados[$key]['lotes'][] = $lote;
+                    $agrupados[$key]['lote_ids'][] = $lote->id;
+                }
+            }
+        }
+
+        // Elimina el campo auxiliar 'lote_ids' antes de enviar a la vista
+        foreach ($agrupados as &$grupo) {
+            unset($grupo['lote_ids']);
+        }
+
+        return view('equipos.inventario', ['inventario' => collect($agrupados)->values()]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Equipo $equipo)

@@ -45,7 +45,7 @@ Toast.fire({
     
     <div class="container">
         <div class="titulo">
-            <h2 class="titulo-principal">Inicio Técnico</h2>
+            <h2 class="titulo-principal">¡Bienvenido {{ auth()->check() ? auth()->user()->name : 'Invitado' }}!</h2>
         </div>
        
         <div class="card principal mx-auto">
@@ -57,34 +57,75 @@ Toast.fire({
                         <i class="fas fa-user"></i>
                         Perfil
                     </a>
+                    @can('ver usuarios')
                     <a href="{{ route('users.index')}}" class="texto boton">
                         <i class="fas fa-users"></i>
                         Usuarios
                     </a>
+                    @endcan
+
+                    @can('ver roles')
                     <a href="{{ route('roles.index')}}" class="texto boton">
                         <i class="fa-solid fa-address-book"></i>
                         Roles
                     </a>
-                    <a href="#solicitudes" class="boton">
+                    @endcan
+
+                    @can('ver solicitudes')
+                    <a href="{{ route('solicitud.index') }}" class="texto boton">
                         <i class="fa-solid fa-circle-question"></i>
                         Solicitudes
                     </a>
-                    <a href="#prestamos" class="boton">
+                    @endcan
+
+                    @can('crear solicitudes')
+                    <a href="{{ route('solicitud.create') }}" class="texto boton">
+                        <i class="fa-solid fa-circle-question"></i>
+                        Solicitar Préstamo
+                    </a>
+                    @endcan
+
+                    @can('ver mis solicitudes')
+                    <a href="{{ route('solicitud.misSolicitudes') }}" class="texto boton">
+                        <i class="fa-solid fa-circle-question"></i>
+                        Mis Solicitudes
+                    </a>
+                    @endcan
+
+                    @can('ver prestamos')
+                    <a href="{{ route('prestamos.index') }}" class="texto boton">
                         <i class="fas fa-clipboard-list"></i>
                         Préstamos
                     </a>
+                    @endcan
+
+                    @can('ver mis prestamos')
+                    <a href="{{ route('prestamos.misPrestamos') }}" class="texto boton">
+                        <i class="fas fa-clipboard-list"></i>
+                        Mis Préstamos
+                    </a>
+                    @endcan
+
+                    @can('ver lotes')
                     <a href="{{ route('lotes.index')}}" class="texto boton">
                         <i class="fa-solid fa-boxes-stacked"></i>
                         Lotes
                     </a>
-                    <a href="{{ route('lotes.index')}}" class="texto boton">
+                    @endcan
+
+                    @can('ver inventario')
+                    <a href="{{ route('equipos.inventario')}}" class="texto boton">
                         <i class="fa-solid fa-box-open"></i>
                         Inventario
                     </a>
+                    @endcan
+
+                    @can('ver equipos')
                     <a href="{{ route('equipos.index')}}" class="texto boton">
                         <i class="fa-solid fa-laptop"></i>
                         Activos
                     </a>
+                    @endcan
                 </div>
             </div>
         </div>

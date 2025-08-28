@@ -85,7 +85,7 @@
     }
     .detalle-custom {
         border-top: 1px solid #e2e8f0;
-        font-size: 1rem;
+        font-size: rem;
     }
     .btn-custom {
         padding: 0.5rem 1.2rem;

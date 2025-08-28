@@ -20,8 +20,15 @@
 
     <!-- Solicitudes -->
     @can('ver solicitudes')
-    <a href="#" class="texto">
+    <a href="{{ route('solicitud.index') }}" class="texto">
         <i class="fa-solid fa-circle-question"></i><span class="TextoNav">Solicitudes</span>
+    </a>
+    @endcan
+
+    <!-- Crear Solicitud -->
+    @can('crear solicitudes')
+    <a href="{{ route('solicitud.create') }}" class="texto">
+        <i class="fa-solid fa-circle-question"></i><span class="TextoNav">Solicitar Préstamo</span>
     </a>
     @endcan
 
@@ -82,16 +89,20 @@
     @endcan
 
     <!-- Lotes -->
+    @can('ver lotes')
     <a href="{{ route('lotes.index')}}" class="texto">
         <i class="fas fa-boxes-stacked"></i><span class="TextoNav">Lotes</span>
     </a>
+    @endcan
 
     <!-- Inventario -->
-    <a href="{{ route('lotes.index')}}" class="texto">
+    @can('ver inventario')
+    <a href="{{ route('equipos.inventario')}}" class="texto">
         <i class="fas fa-box-open"></i><span class="TextoNav">Inventario</span>
     </a>
+    @endcan
     <br>
-
+    
     <!-- Cerrar sesión -->
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf

@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/', LoteEquipoController::class)->parameters(['' => 'loteEquipo']);
     });
 
+    Route::get('equipos/inventario', [EquipoController::class, 'inventario'])->name('equipos.inventario');
     Route::resources([
         'categorias' => CategoriaController::class,
         'marcas' => MarcaController::class,
@@ -44,6 +45,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    // Mis Solicitudes y Mis Préstamos
+    Route::get('/mis-solicitudes', [\App\Http\Controllers\SolicitudPrestamoController::class, 'misSolicitudes'])->name('solicitud.misSolicitudes');
+    Route::get('/mis-prestamos', [\App\Http\Controllers\PrestamoController::class, 'misPrestamos'])->name('prestamos.misPrestamos');
+    // Préstamos
+    Route::get('/prestamos', [\App\Http\Controllers\PrestamoController::class, 'index'])->name('prestamos.index');
+    Route::get('/prestamos/{id}', [\App\Http\Controllers\PrestamoController::class, 'show'])->name('prestamos.show');
     // Equipment selection and cart routes
     Route::get('/solicitud/create', [SolicitudPrestamoController::class, 'create'])->name('solicitud.create');
     Route::get('/solicitud/cart', [SolicitudPrestamoController::class, 'cart'])->name('solicitud.cart');
@@ -52,4 +59,12 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/solicitud/update-cart/{index}', [SolicitudPrestamoController::class, 'updateCart'])->name('solicitud.updateCart');
     Route::post('/solicitud/store', [SolicitudPrestamoController::class, 'store'])->name('solicitud.store');
     Route::get('/solicitud/clear-cart', [SolicitudPrestamoController::class, 'clearCart'])->name('solicitud.clearCart');
+
+    // Solicitudes index y show
+    Route::get('/solicitudes', [SolicitudPrestamoController::class, 'index'])->name('solicitud.index');
+    Route::get('/solicitudes/{id}', [SolicitudPrestamoController::class, 'show'])->name('solicitud.show');
+
+    // Aceptar y rechazar solicitud
+    Route::post('/solicitudes/{id}/aceptar', [SolicitudPrestamoController::class, 'aceptar'])->name('solicitud.aceptar');
+    Route::post('/solicitudes/{id}/rechazar', [SolicitudPrestamoController::class, 'rechazar'])->name('solicitud.rechazar');
 });

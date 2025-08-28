@@ -17,7 +17,7 @@ class Equipo extends Model
         return $this->belongsTo(LoteEquipo::class, 'lote_equipo_id');
     }
 
-    public function estadoEquipo()
+    public function estado_equipo()
     {
         return $this->belongsTo(EstadoEquipo::class);
     }
