@@ -130,7 +130,7 @@ class EquipoController extends Controller
     public function inventario()
     {
         $lotes = LoteEquipo::with(['marca', 'categorias', 'equipos'])->get();
-
+        
         $agrupados = [];
         foreach ($lotes as $lote) {
             foreach ($lote->categorias as $categoria) {
@@ -138,7 +138,7 @@ class EquipoController extends Controller
                 if (!isset($agrupados[$key])) {
                     $agrupados[$key] = [
                         'modelo' => $lote->modelo,
-                        'marca' => $lote->marca->nombre,
+                        'marca' => $lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : 'Sin marca',
                         'categoria' => $categoria->nombre,
                         'cantidad_total' => 0,
                         'cantidad_disponible' => 0,
