@@ -8,20 +8,22 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="{{ asset('css/scanner.css') }}">
+<link rel="stylesheet" href="{{ asset('css/lotecreate.css') }}">
+
 @endpush
 
 @section('content')
 <div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-8">
-            <div class="card border-0 shadow-sm rounded-3" style="background-color: #f1f1f1ff;">
-                <div class="card-body p-4">
+        <div class="col-lg-10 col-xl-8 ">
+            <div class="card border-0 bg-white shadow-lg rounded-4 p-5" style="background-color: #f1f1f1ff;">
+                <div class="card-body p-4 ">
                     <h4 class="mb-4 text-center fw-semibold text-dark">Registro de Nuevo Lote</h4>
                     <form action="{{ route('lotes.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
-                        <div class="row g-4">
+                        <div class="row g-4 ">
                             <!-- Imagen -->
-                            <div class="col-md-4 text-center">
+                            <div class="col-12 text-center mb-4">
                                 <img id="preview" class="img-fluid border rounded mb-3" style="max-width: 220px; display: none; background: #f8f9fa;" alt="Vista previa">
                                 <div>
                                     <label for="img_path" class="form-label fw-medium">Imagen del equipo</label>
@@ -33,51 +35,60 @@
                             </div>
 
                             <!-- Información -->
-                            <div class="col-md-8">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="modelo" class="form-label fw-medium">Modelo</label>
-                                        <input type="text" name="modelo" id="modelo" class="form-control" value="{{old('modelo')}}">
-                                        @error('modelo')
-                                        <small class="text-danger">{{'*'.$message}}</small>
-                                        @enderror
-                                    </div>
+                            <div class="col-12 ">
+    <div class="row g-3">
 
-                                    <div class="col-md-6">
-                                        <label for="contenido_etiqueta" class="form-label fw-medium">Contenido de etiqueta</label>
-                                        <input type="text" name="contenido_etiqueta" id="contenido_etiqueta" class="form-control" value="{{old('contenido_etiqueta')}}">
-                                        @error('contenido_etiqueta')
-                                        <small class="text-danger">{{'*'.$message}}</small>
-                                        @enderror
-                                    </div>
+        <!-- Modelo -->
+        <div class="col-md-6 mb-3 ">
+            <label for="modelo" class="form-label fw-medium">Modelo</label>
+            <input type="text" name="modelo" id="modelo" class="form-control" value="{{old('modelo')}}">
+            @error('modelo')
+            <small class="text-danger">{{'*'.$message}}</small>
+            @enderror
+        </div>
 
-                                    <div class="col-md-6">
-                                        <label for="detalle" class="form-label fw-medium">Detalle</label>
-                                        <input type="text" name="detalle" id="detalle" class="form-control" value="{{old('detalle')}}">
-                                        @error('detalle')
-                                        <small class="text-danger">{{'*'.$message}}</small>
-                                        @enderror
-                                    </div>
+        <!-- Contenido de etiqueta -->
+        <div class="col-md-6 mb-3">
+            <label for="contenido_etiqueta" class="form-label fw-medium">Contenido de etiqueta</label>
+            <input type="text" name="contenido_etiqueta" id="contenido_etiqueta" class="form-control" value="{{old('contenido_etiqueta')}}">
+            @error('contenido_etiqueta')
+            <small class="text-danger">{{'*'.$message}}</small>
+            @enderror
+        </div>
 
-                                    <div class="col-md-6">
-                                        <label id="cantidad_label" for="cantidad_total" class="form-label fw-medium">Cantidad</label>
-                                        <input type="number" name="cantidad_total" id="cantidad_total" class="form-control" min="1" value="{{old('cantidad_total')}}">
-                                        @error('cantidad_total')
-                                        <small class="text-danger">{{'*'.$message}}</small>
-                                        @enderror
-                                    </div>
+        <!-- Detalle -->
+        <div class="col-md-6 mb-3">
+            <label for="detalle" class="form-label fw-medium">Detalle</label>
+            <input type="text" name="detalle" id="detalle" class="form-control" value="{{old('detalle')}}">
+            @error('detalle')
+            <small class="text-danger">{{'*'.$message}}</small>
+            @enderror
+        </div>
 
-                                    <div class="col-md-6">
-                                        <label for="marca_id" class="form-label fw-medium">Marca</label>
-                                        <select name="marca_id" id="marca_id" class="form-select selectpicker show-tick" data-size="4" data-live-search="true">
-                                            @foreach ($marcas as $item)
-                                            <option value="{{$item->id}}" {{ old('marca_id') == $item->id ? 'selected' : '' }}>{{$item->nombre}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('marca_id')
-                                        <small class="text-danger">{{'*'.$message}}</small>
-                                        @enderror
-                                    </div>
+        <!-- Cantidad -->
+        <div class="col-md-6 mb-3">
+            <label for="cantidad_total" class="form-label fw-medium">Cantidad</label>
+            <input type="number" name="cantidad_total" id="cantidad_total" class="form-control" min="1" value="{{old('cantidad_total')}}">
+            @error('cantidad_total')
+            <small class="text-danger">{{'*'.$message}}</small>
+            @enderror
+        </div>
+
+        <!-- Marca -->
+        <div class="col-md-6 mb-3">
+            <label for="marca_id" class="form-label fw-medium">Marca</label>
+            <select name="marca_id" id="marca_id" class="form-select selectpicker show-tick" data-size="4" data-live-search="true">
+                @foreach ($marcas as $item)
+                <option value="{{$item->id}}" {{ old('marca_id') == $item->id ? 'selected' : '' }}>{{$item->nombre}}</option>
+                @endforeach
+            </select>
+            @error('marca_id')
+            <small class="text-danger">{{'*'.$message}}</small>
+            @enderror
+        </div>
+
+    </div>
+</div>
 
                                     <div class="col-md-12">
                                         <label class="form-label fw-medium">Categorías</label>

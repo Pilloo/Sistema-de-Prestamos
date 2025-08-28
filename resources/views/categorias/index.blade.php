@@ -30,6 +30,15 @@ Swal.fire({
 @if(session('error'))
 <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
+<style>
+    body {
+    background-color: rgba(255, 0, 0, 0.5); /* Color rojo semitransparente */
+       background-image: url('{{ asset('img/template/fondoPrincipal.jpg') }}') !important;
+       background-size: cover;
+       background-repeat: no-repeat;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+</style>
 
 <div class="container py-5">
     <div class="panel">
