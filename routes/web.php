@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/', LoteEquipoController::class)->parameters(['' => 'loteEquipo']);
     });
 
+    Route::get('equipos/inventario', [EquipoController::class, 'inventario'])->name('equipos.inventario');
     Route::resources([
         'categorias' => CategoriaController::class,
         'marcas' => MarcaController::class,

@@ -129,15 +129,13 @@ class EquipoController extends Controller
      */
     public function inventario()
     {
-        $lotes = LoteEquipo::with(['marca', 'categorias', 'equipos'])
-            ->get();
+        $lotes = LoteEquipo::with(['marca', 'categorias', 'equipos'])->get();
 
-        // Agrupar por modelo, marca y categoría
-        $agrupados = collect();
+        $agrupados = [];
         foreach ($lotes as $lote) {
             foreach ($lote->categorias as $categoria) {
                 $key = $lote->modelo . '|' . $lote->marca->nombre . '|' . $categoria->nombre;
-                if (!$agrupados->has($key)) {
+                if (!isset($agrupados[$key])) {
                     $agrupados[$key] = [
                         'modelo' => $lote->modelo,
                         'marca' => $lote->marca->nombre,
@@ -145,15 +143,25 @@ class EquipoController extends Controller
                         'cantidad_total' => 0,
                         'cantidad_disponible' => 0,
                         'lotes' => [],
+                        'lote_ids' => [],
                     ];
                 }
-                $agrupados[$key]['cantidad_total'] += $lote->cantidad_total;
-                $agrupados[$key]['cantidad_disponible'] += $lote->cantidad_disponible;
-                $agrupados[$key]['lotes'][] = $lote;
+                // Solo sumar si el lote no ha sido agregado antes a este grupo
+                if (!in_array($lote->id, $agrupados[$key]['lote_ids'])) {
+                    $agrupados[$key]['cantidad_total'] += $lote->cantidad_total;
+                    $agrupados[$key]['cantidad_disponible'] += $lote->cantidad_disponible;
+                    $agrupados[$key]['lotes'][] = $lote;
+                    $agrupados[$key]['lote_ids'][] = $lote->id;
+                }
             }
         }
 
-        return view('equipos.inventario', ['inventario' => $agrupados->values()]);
+        // Elimina el campo auxiliar 'lote_ids' antes de enviar a la vista
+        foreach ($agrupados as &$grupo) {
+            unset($grupo['lote_ids']);
+        }
+
+        return view('equipos.inventario', ['inventario' => collect($agrupados)->values()]);
     }
 
     /**

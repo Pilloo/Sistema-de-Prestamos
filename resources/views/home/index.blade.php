@@ -77,7 +77,7 @@ Toast.fire({
                         <i class="fa-solid fa-boxes-stacked"></i>
                         Lotes
                     </a>
-                    <a href="{{ route('equipos.index')}}" class="texto boton">
+                    <a href="{{ route('equipos.inventario')}}" class="texto boton">
                         <i class="fa-solid fa-box-open"></i>
                         Inventario
                     </a>
