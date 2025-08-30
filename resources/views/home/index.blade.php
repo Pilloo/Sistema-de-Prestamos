@@ -45,7 +45,7 @@ Toast.fire({
     
     <div class="container">
         <div class="titulo">
-            <h2 class="titulo-principal">¡Bienvenido {{ auth()->check() ? auth()->user()->name : 'Invitado' }}!</h2>
+            <h2 class="titulo-principal fw-bold">Sistema de Préstamos</h2>
         </div>
        
         <div class="card principal mx-auto">
@@ -126,6 +126,15 @@ Toast.fire({
                         Activos
                     </a>
                     @endcan
+
+                    <!-- Cerrar sesión -->
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+                        @csrf
+                    </form>
+                    <a href="#" class="texto boton" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Cerrar sesión
+                    </a>
                 </div>
             </div>
         </div>

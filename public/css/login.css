@@ -1,5 +1,9 @@
 body {
-      background-color: #f5f5f5;
+      background-image: url("/img/template/fondoPrincipal.jpg");
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -80,7 +84,7 @@ body {
     .logo {
       display: block;
       margin: 0 auto 2rem auto;
-      width: 9rem;
+      width: 12rem;
       height: auto;
     }
 

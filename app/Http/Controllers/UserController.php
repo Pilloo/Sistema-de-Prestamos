@@ -92,7 +92,17 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('users.edit', compact('user', 'roles'));
+        $departamentos = Departamento::join('caracteristicas as c', 'departamentos.caracteristica_id', '=', 'c.id')
+            ->select('departamentos.id as id', 'c.nombre as nombre')
+            ->where('c.estado', 1)
+            ->get();
+
+        $secciones = Seccione::join('caracteristicas as c', 'secciones.caracteristica_id', '=', 'c.id')
+            ->select('secciones.id as id', 'c.nombre as nombre')
+            ->where('c.estado', 1)
+            ->get();
+
+        return view('users.edit', compact('user', 'roles', 'departamentos', 'secciones'));
     }
 
     /**

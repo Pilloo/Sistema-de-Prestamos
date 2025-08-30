@@ -1,40 +1,52 @@
 @extends('template')
 
 @section('content')
-<div class="container d-flex justify-content-center align-items-start p-4" style="margin-top: 50px;">
-    <div class="user-card mx-auto">
-        <div class="d-flex align-items-center mb-4">
-            <div class="avatar-bg me-4">
-                @if($user->img_path)
-                    <img src="{{ asset('img/users/' . $user->img_path) }}" alt="Foto de perfil" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
-                @else
-                    <img src="{{ asset('img/template/default-user.png') }}" alt="Foto de perfil" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
-                @endif
+<body>
+    <div class="container d-flex justify-content-center align-items-start p-4" style="margin-top: 50px;">
+        <div class="user-card mx-auto">
+            <div class="d-flex align-items-center mb-4">
+                <div class="avatar-bg me-4">
+                    @if($user->img_path)
+                        <img src="{{ asset('img/users/' . $user->img_path) }}" alt="Foto de perfil" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                    @else
+                        <img src="{{ asset('img/template/default-user.png') }}" alt="Foto de perfil" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                    @endif
+                </div>
+                <div>
+                    <p class="mb-1 fw-bold" style="font-size: 1.5rem;">{{ $user->name }} {{ $user->primer_apellido }} {{ $user->segundo_apellido }}</p>
+                    <p class="mb-0 text-muted" style="font-size: 1rem;">{{ $user->email }}</p>
+                </div>
             </div>
-            <div>
-                <p class="mb-1 fw-bold" style="font-size: 1.5rem;">{{ $user->name }}</p>
-                <p class="mb-0 text-muted" style="font-size: 1rem;">{{ $user->email }}</p>
+            <div class="mb-4">
+                @can('ver rol perfil')
+                <p class="mb-2" style="font-size: 1rem;">Rol: <strong>{{ $user->getRoleNames()->first() ?? 'Sin rol' }}</strong></p>
+                @endcan
+                <p class="mb-2" style="font-size: 1rem;">Departamento: <strong>{{ $user->departamento?->caracteristica?->nombre ?? 'Sin departamento' }}</strong></p>
+                <p class="mb-0" style="font-size: 1rem;">Sección: <strong>{{ $user->seccion?->caracteristica?->nombre ?? 'Sin sección' }}</strong></p>
             </div>
-        </div>
-        <div class="mb-4">
-            <p class="mb-2" style="font-size: 1rem;">Rol: <strong>{{ $user->getRoleNames()->first() ?? 'Sin rol' }}</strong></p>
-            <p class="mb-2" style="font-size: 1rem;">Departamento: <strong>{{ $user->departamento?->caracteristica?->nombre ?? 'Sin departamento' }}</strong></p>
-            <p class="mb-0" style="font-size: 1rem;">Sección: <strong>{{ $user->seccion?->caracteristica?->nombre ?? 'Sin sección' }}</strong></p>
-        </div>
-        <div class="d-flex justify-content-between gap-4">
-            <a href="{{ url('/') }}" class="btn btn-custom">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
-            <a href="{{ route('users.edit', $user->id) }}" class="btn btn-custom">
-                <i class="fas fa-pen"></i> Editar
-            </a>
+            <div class="d-flex justify-content-between gap-4">
+                <a href="{{ url('/') }}" class="btn btn-custom">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-custom">
+                    <i class="fas fa-pen"></i> Editar
+                </a>
+            </div>
         </div>
     </div>
-</div>
+</body>
 
 @push('css')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 <style>
+    body {
+        background-image: url("/img/template/fondoPrincipal.jpg");
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
     .user-card {
         border-radius: 1.5rem;
         border: 1px solid #c1c7d0;
