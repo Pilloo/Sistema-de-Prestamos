@@ -120,6 +120,7 @@
                                 <th>Número de Serie</th>
                                 <th>Modelo</th>
                                 <th>Marca</th>
+                                <th>Categoría</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -130,6 +131,15 @@
                                 <td>{{ $equipo->numero_serie }}</td>
                                 <td>{{ $equipo->lote->modelo ?? 'N/A' }}</td>
                                 <td>{{ $equipo->lote->marca->caracteristica->nombre ?? 'Sin marca' }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        @forelse ($equipo->lote->categorias as $listaCategorias)
+                                            {{ $listaCategorias->caracteristica->nombre ?? 'Sin categoría' }}
+                                        @empty
+                                            Sin categoría
+                                        @endforelse
+                                    </span>
+                                </td>
                                 <td>
                                     <span class="badge bg-secondary">
                                         {{ $equipo->estado_equipo->nombre ?? 'N/A' }}

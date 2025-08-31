@@ -20,6 +20,18 @@
                 <div class="card-body p-4 ">
                     <h4 class="mb-4 text-center fw-semibold text-dark">Registro de Nuevo Lote</h4>
                     <form action="{{ route('lotes.store') }}" method="post" enctype="multipart/form-data">
+                        <!-- Seleccionar lote existente para duplicar -->
+                        <div class="col-12 mb-4">
+                            <label for="lote_existente" class="form-label fw-medium">Duplicar características de un lote existente</label>
+                            <input type="text" id="buscarLote" class="form-control mb-2" placeholder="Buscar lote por modelo, marca o detalle...">
+                            <select id="lote_existente" name="lote_existente_id" class="form-select">
+                                <option value="">-- Selecciona un lote --</option>
+                                @foreach($lotes_existentes as $lote)
+                                    <option value="{{ $lote->id }}">{{ $lote->modelo }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Solo se copiarán modelo, contenido de etiqueta, marca, categorías, detalle e imagen. La cantidad y los seriales deben ingresarse manualmente.</small>
+                        </div>
                         @csrf
                         <div class="row g-4 ">
                             <!-- Imagen -->
@@ -68,7 +80,7 @@
         <!-- Cantidad -->
         <div class="col-md-6 mb-3">
             <label for="cantidad_total" class="form-label fw-medium">Cantidad</label>
-            <input type="number" name="cantidad_total" id="cantidad_total" class="form-control" min="1" value="{{old('cantidad_total')}}">
+            <input type="number" name="cantidad_total" id="cantidad_total" class="form-control" min="1" value="{{old('cantidad_total')}}" required>
             @error('cantidad_total')
             <small class="text-danger">{{'*'.$message}}</small>
             @enderror
@@ -93,7 +105,7 @@
                                     <div class="col-md-12">
                                         <label class="form-label fw-medium">Categorías</label>
                                         <div class="border rounded p-3 bg-light" style="max-height: 120px; overflow-y: auto;">
-                                            <div class="row">
+                                            <div class="row" id="categorias-checkboxes">
                                                 @foreach ($categorias as $item)
                                                 <div class="col-md-4 col-6">
                                                     <div class="form-check">
@@ -156,11 +168,71 @@
 @endsection
 
 @push('js')
+<script>
+    // Filtro de lotes en el select
+    document.getElementById('buscarLote').addEventListener('input', function() {
+        const filtro = this.value.toLowerCase();
+        const select = document.getElementById('lote_existente');
+        for (let i = 0; i < select.options.length; i++) {
+            if (i === 0) { // opción por defecto
+                select.options[i].style.display = '';
+                continue;
+            }
+            const lote = lotesData.find(l => l.id == select.options[i].value);
+            let texto = '';
+            if (lote) {
+                texto = (lote.modelo || '') + ' ' + (lote.marca?.caracteristica?.nombre || '') + ' ' + (lote.detalle || '');
+            }
+            select.options[i].style.display = texto.toLowerCase().includes(filtro) ? '' : 'none';
+        }
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="{{ asset('js/scanner.js') }}"></script>
 <script src="{{ asset('js/scannerLector.js') }}"></script>
+
+
+<script>
+    // Prepare lotes data for JS
+    const lotesData = @json($lotes_existentes);
+
+    document.getElementById('lote_existente').addEventListener('change', function() {
+        const selectedId = this.value;
+        if (!selectedId) {
+            // Clear fields if no lot selected
+            document.getElementById('modelo').value = '';
+            document.getElementById('contenido_etiqueta').value = '';
+            document.getElementById('detalle').value = '';
+            document.getElementById('marca_id').value = '';
+            document.getElementById('preview').style.display = 'none';
+            document.getElementById('preview').src = '';
+            // Uncheck all categories
+            document.querySelectorAll('#categorias-checkboxes input[type=checkbox]').forEach(cb => cb.checked = false);
+            return;
+        }
+        const lote = lotesData.find(l => l.id == selectedId);
+        if (lote) {
+            document.getElementById('modelo').value = lote.modelo || '';
+            document.getElementById('contenido_etiqueta').value = lote.contenido_etiqueta || '';
+            document.getElementById('detalle').value = lote.detalle || '';
+            document.getElementById('marca_id').value = lote.marca_id || '';
+            // Imagen preview
+            if (lote.img_path) {
+                document.getElementById('preview').src = '/img/equipos/' + lote.img_path;
+                document.getElementById('preview').style.display = 'block';
+            } else {
+                document.getElementById('preview').style.display = 'none';
+                document.getElementById('preview').src = '';
+            }
+            // Categorías
+            document.querySelectorAll('#categorias-checkboxes input[type=checkbox]').forEach(cb => {
+                cb.checked = lote.categorias.some(cat => cat.id == cb.value);
+            });
+        }
+    });
+</script>
 
 
 <script>

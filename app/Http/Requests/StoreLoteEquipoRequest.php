@@ -14,7 +14,7 @@ class StoreLoteEquipoRequest extends FormRequest
     public function rules(): array
     {
         return [
-
+            
         ];
     }
 }

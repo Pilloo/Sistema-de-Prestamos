@@ -45,7 +45,21 @@ class LoteEquipoController extends Controller
 
         $estado_equipos = EstadoEquipo::all();
 
-        return view('lotes.create', compact('marcas', 'categorias', 'estado_equipos'));
+        // Get all existing lots with their relations for duplication
+        $todos_lotes = \App\Models\LoteEquipo::with(['marca.caracteristica', 'categorias.caracteristica'])->get();
+
+        // Agrupar por modelo, marca y categorías (como en inventario)
+        $agrupados = [];
+        foreach ($todos_lotes as $lote) {
+            $cat_ids = $lote->categorias->pluck('id')->sort()->implode(',');
+            $key = $lote->modelo . '|' . $lote->marca_id . '|' . $cat_ids;
+            if (!isset($agrupados[$key])) {
+                $agrupados[$key] = $lote;
+            }
+        }
+        $lotes_existentes = collect(array_values($agrupados));
+
+        return view('lotes.create', compact('marcas', 'categorias', 'estado_equipos', 'lotes_existentes'));
     }
 
     /**
@@ -56,10 +70,21 @@ class LoteEquipoController extends Controller
         try{
             DB::beginTransaction();
             $lote_equipo = new LoteEquipo();
+            $name = null;
             if ($request->hasFile('img_path')){
                 $name = $lote_equipo->handleUploadImage($request->file('img_path'));
-            }else{
-                $name = null;
+            } else if ($request->filled('lote_existente_id')) {
+                // Copiar la imagen del lote seleccionado
+                $lote_existente = LoteEquipo::find($request->lote_existente_id);
+                if ($lote_existente && $lote_existente->img_path) {
+                    $origen = public_path('img/equipos/' . $lote_existente->img_path);
+                    $nuevo_nombre = time() . '_copia_' . $lote_existente->img_path;
+                    $destino = public_path('img/equipos/' . $nuevo_nombre);
+                    if (file_exists($origen)) {
+                        copy($origen, $destino);
+                        $name = $nuevo_nombre;
+                    }
+                }
             }
 
             $lote_equipo->fill([
