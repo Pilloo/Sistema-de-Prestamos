@@ -146,7 +146,11 @@
 
                         <!-- Botones -->
                         <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+                            @if($user->hasRole('admin'))
                             <a href="{{ route('users.index')}}" class="btn btn-outline-secondary px-4">Cancelar</a>
+                            @else
+                            <a href="{{ auth()->check() ? route('users.show', auth()->user()->id) : '#' }}" class="btn btn-outline-secondary px-4">Cancelar</a>
+                            @endif
                             <button type="reset" class="btn btn-outline-dark px-4">Reiniciar</button>
                             <button type="submit" class="btn btn-primary px-5">Actualizar</button>
                         </div>
