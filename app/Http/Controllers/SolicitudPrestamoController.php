@@ -42,7 +42,8 @@ class SolicitudPrestamoController extends Controller
             'solicitante',
             'estadoSolicitud',
             'equipos.lote.marca',
-            'equipos.estado_equipo'
+            'equipos.estado_equipo',
+            'equipos.lote.categorias'
         ])->findOrFail($id);
         return view('solicitud.show', compact('solicitud'));
     }
@@ -51,11 +52,34 @@ class SolicitudPrestamoController extends Controller
      */
     public function create()
     {
-        $equipos = LoteEquipo::with(['marca', 'categorias'])
+        $lotes = LoteEquipo::with(['marca', 'categorias'])
             ->where('cantidad_disponible', '>', 0)
             ->get();
 
-        return view('solicitud.create', compact('equipos'));
+        // Agrupar lotes por modelo, marca y categorías (similar a inventario)
+        $agrupados = [];
+        foreach ($lotes as $lote) {
+            foreach ($lote->categorias as $categoria) {
+                $key = $lote->modelo . '|' . ($lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : 'Sin marca') . '|' . ($categoria->caracteristica->nombre ?? 'Sin categoría');
+                if (!isset($agrupados[$key])) {
+                    $agrupados[$key] = [
+                        'modelo' => $lote->modelo,
+                        'marca' => $lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : 'Sin marca',
+                        'categoria' => $categoria->caracteristica->nombre ?? 'Sin categoría',
+                        'cantidad_total' => 0,
+                        'cantidad_disponible' => 0,
+                        'lotes' => [],
+                    ];
+                }
+                $agrupados[$key]['cantidad_total'] += $lote->cantidad_total;
+                $agrupados[$key]['cantidad_disponible'] += $lote->cantidad_disponible;
+                $agrupados[$key]['lotes'][] = $lote;
+            }
+        }
+
+        $equiposAgrupados = collect($agrupados)->values();
+
+        return view('solicitud.create', ['equiposAgrupados' => $equiposAgrupados]);
     }
 
     /**

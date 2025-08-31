@@ -69,13 +69,7 @@
             @can('gestionar solicitudes')
             <form action="{{ route('solicitud.addToCart') }}" method="POST" class="mb-4">
                 @csrf
-                <label for="user_id" class="form-label fw-medium">Seleccionar usuario solicitante</label>
-                <select name="user_id" id="user_id" class="form-select" required>
-                    <option value="" disabled selected>Seleccione un usuario</option>
-                    @foreach(App\Models\User::all() as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                    @endforeach
-                </select>
+                    <input type="hidden" name="user_id" value="default_user_id"> <!-- Placeholder for user_id -->
             </form>
             @endcan
 
@@ -94,22 +88,24 @@
             @endif
 
             <div class="d-flex flex-wrap gap-4 justify-content-center">
-                @foreach($equipos as $equipment)
+                @foreach($equiposAgrupados as $grupo)
                 <div class="product-card">
-                    <img src="{{ $equipment->img_path ?? 'https://storage.googleapis.com/a1aa/image/c7d51ac1-0253-48bc-7020-40fff88aee8a.jpg' }}" 
-                         alt="{{ $equipment->modelo }}">
+                    <!-- Mostrar imagen del primer lote del grupo -->
+                    @php $primerLote = $grupo['lotes'][0]; @endphp
+                    <img src="{{ asset('img/equipos/' . $primerLote->img_path) }}" 
+                         alt="{{ $grupo['modelo'] }}">
                     <div class="product-card-body">
-                        <h5 class="text-truncate mb-1 fw-semibold">{{ $equipment->modelo }}</h5>
-                        <p class="text-muted mb-1">Categoría: {{ $equipment->categorias->first()->nombre ?? 'Sin categoría' }}</p>
-                        <p class="text-muted mb-1">Marca: {{ $equipment->marca->nombre }}</p>
-                        <p class="text-muted mb-3">Disponibles: {{ $equipment->cantidad_disponible }}</p>
+                        <h5 class="text-truncate mb-1 fw-semibold">{{ $grupo['modelo'] }}</h5>
+                        <p class="text-muted mb-1">Categoría: {{ $grupo['categoria'] }}</p>
+                        <p class="text-muted mb-1">Marca: {{ $grupo['marca'] }}</p>
+                        <p class="text-muted mb-3">Disponibles: {{ $grupo['cantidad_disponible'] }}</p>
 
-                        @if($equipment->cantidad_disponible > 0)
+                        @if($grupo['cantidad_disponible'] > 0)
                         <button type="button" class="btn btn-request open-modal"
                                 data-bs-toggle="modal" data-bs-target="#cartModal"
-                                data-id="{{ $equipment->id }}"
-                                data-title="{{ $equipment->modelo }}"
-                                data-max="{{ $equipment->cantidad_disponible }}">
+                                data-lotes='@json($grupo['lotes'])'
+                                data-title="{{ $grupo['modelo'] }}"
+                                data-max="{{ $grupo['cantidad_disponible'] }}">
                             Solicitar
                         </button>
                         @else
@@ -136,8 +132,12 @@
                 <div class="modal-body">
                     <p class="mb-3">¿Deseas agregar <span id="modalProductTitle" class="fw-bold">este equipo</span> a tu solicitud?</p>
 
-                    <input type="hidden" name="lote_id" id="modalLoteId">
-
+                    <div class="mb-3">
+                        <label for="loteSelect" class="form-label fw-medium">Selecciona Lote</label>
+                        <select class="form-select" id="loteSelect" name="lote_id" required>
+                            <!-- Opciones generadas por JS -->
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label for="quantityInput" class="form-label fw-medium">Cantidad</label>
                         <input type="number" class="form-control" id="quantityInput" name="cantidad" min="1" value="1" required>
@@ -166,14 +166,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const cartModal = document.getElementById('cartModal');
     cartModal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget;
-        const loteId = button.getAttribute('data-id');
+        const lotes = JSON.parse(button.getAttribute('data-lotes'));
         const title = button.getAttribute('data-title');
-        const maxQuantity = button.getAttribute('data-max');
+        let maxQuantity = 0;
+
+        // Generar opciones de lotes en el select
+        const loteSelect = document.getElementById('loteSelect');
+        loteSelect.innerHTML = '';
+        lotes.forEach(function(lote) {
+            const option = document.createElement('option');
+            option.value = lote.id;
+            option.textContent = 'Lote #' + lote.id + ' - Disponibles: ' + lote.cantidad_disponible;
+            option.setAttribute('data-max', lote.cantidad_disponible);
+            loteSelect.appendChild(option);
+            if (lote.cantidad_disponible > maxQuantity) maxQuantity = lote.cantidad_disponible;
+        });
 
         document.getElementById('modalProductTitle').textContent = title;
-        document.getElementById('modalLoteId').value = loteId;
-        document.getElementById('quantityInput').max = maxQuantity;
-        document.getElementById('maxQuantity').textContent = maxQuantity;
+        document.getElementById('quantityInput').max = lotes[0].cantidad_disponible;
+        document.getElementById('maxQuantity').textContent = lotes[0].cantidad_disponible;
+
+        // Actualizar max cantidad al cambiar lote
+        loteSelect.addEventListener('change', function() {
+            const selected = loteSelect.options[loteSelect.selectedIndex];
+            const loteMax = selected.getAttribute('data-max');
+            document.getElementById('quantityInput').max = loteMax;
+            document.getElementById('maxQuantity').textContent = loteMax;
+        });
+        loteSelect.dispatchEvent(new Event('change'));
 
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dueDateInput').min = today;

@@ -33,38 +33,7 @@ class EquipoController extends Controller
      */
     public function create()
     {
-        $equipos = Equipo::select('id', 'modelo', 'numero_serie', 'contenido_etiqueta', 'detalle', 'cantidad_total', 'marca_id', 'estado_equipo_id', 'img_path')
-            ->where('estado_equipo_id', '!=', 7)
-            ->get();
-
-        $equiposCategorias = $equipos->map(function ($equipo) {
-            return [
-                'id' => $equipo->id,
-                'modelo' => $equipo->modelo,
-                'numero_serie' => $equipo->numero_serie,
-                'contenido_etiqueta' => $equipo->contenido_etiqueta,
-                'detalle' => $equipo->detalle,
-                'cantidad_total' => $equipo->cantidad_total,
-                'marca_id' => $equipo->marca_id,
-                'estado_equipo_id' => $equipo->estado_equipo_id,
-                'img_path' => $equipo->img_path,
-                'categorias' => $equipo->categorias->pluck('id')->toArray(),
-            ];
-        });
-        
-        $marcas = Marca::join('caracteristicas as c', 'marcas.caracteristica_id', '=', 'c.id')
-            ->select('marcas.id as id', 'c.nombre as nombre')
-            ->where('c.estado', 1)
-            ->get();
-
-        $categorias = Categoria::join('caracteristicas as c', 'categorias.caracteristica_id', '=', 'c.id')
-            ->select('categorias.id as id', 'c.nombre as nombre')
-            ->where('c.estado', 1)
-            ->get();
-
-        $estado_equipos = EstadoEquipo::all();
-
-        return view('equipos.create', compact('marcas', 'categorias', 'estado_equipos', 'equipos', 'equiposCategorias' ));
+        //
     }
 
     /**
@@ -72,47 +41,7 @@ class EquipoController extends Controller
      */
     public function store(StoreEquipoRequest $request)
     {
-        try{
-            DB::beginTransaction();
-            $equipo = new Equipo();
-            if ($request->hasFile('img_path')){
-                $name = $equipo->handleUploadImage($request->file('img_path'));
-            }else{
-                $name = null;
-            }
-
-            $equipoExistente = Equipo::where('modelo', $request->modelo)
-                ->where('numero_serie', $request->numero_serie)
-                ->first();
-            
-            if($equipoExistente){
-                $equipoExistente->cantidad_total += $request->cantidad_total;
-                $equipoExistente->cantidad_disponible += $request->cantidad_total;
-                $equipoExistente->save();
-            }else{
-                $equipo->fill([
-                    'modelo' => $request->modelo,
-                    'numero_serie' => $request->numero_serie,
-                    'contenido_etiqueta' => $request->contenido_etiqueta,
-                    'detalle' => $request->detalle,
-                    'cantidad_total' => $request->cantidad_total,
-                    'cantidad_disponible' => $request->cantidad_total,
-                    'marca_id' => $request->marca_id,
-                    'estado_equipo_id' => $request->estado_equipo_id,
-                    'img_path' => $name
-                ]);
-
-                $equipo->save();
-                $categorias = $request->get('categorias');
-                $equipo->categorias()->attach($categorias);
-            }
-            
-            DB::commit();
-        }catch(Exception $e){
-            DB::rollBack();
-            dd($e->getMessage());
-        }
-        return redirect()->route('equipos.index')->with('success', 'Equipo registrado');
+        //
     }
 
     /**
