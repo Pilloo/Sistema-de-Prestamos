@@ -12,7 +12,7 @@
 
   <style>
     body {
-      background-image: url("/img/template/fondoPrincipal.jpg");
+      background-image: url("/img/template/fondoLogin.png");
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
