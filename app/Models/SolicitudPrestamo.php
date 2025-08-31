@@ -16,12 +16,21 @@ class SolicitudPrestamo extends Model
         'fecha_limite_solicitada',
         'detalle',
         'id_solicitante',
-        'id_estado_solicitud'
+        'id_estado_solicitud',
+        // Campos de préstamo
+        'fecha_entrega',
+        'fecha_devolucion',
+        'observaciones_entrega',
+        'observaciones_devolucion',
+        'id_tecnico_aprobador',
+        'estado_prestamo'
     ];
 
     protected $casts = [
         'fecha_solicitud' => 'datetime',
         'fecha_limite_solicitada' => 'datetime',
+        'fecha_entrega' => 'datetime',
+        'fecha_devolucion' => 'datetime',
     ];
 
     /**

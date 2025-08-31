@@ -93,20 +93,6 @@ Toast.fire({
                     </a>
                     @endcan
 
-                    @can('ver prestamos')
-                    <a href="{{ route('prestamos.index') }}" class="texto boton">
-                        <i class="fas fa-clipboard-list"></i>
-                        Préstamos
-                    </a>
-                    @endcan
-
-                    @can('ver mis prestamos')
-                    <a href="{{ route('prestamos.misPrestamos') }}" class="texto boton">
-                        <i class="fas fa-clipboard-list"></i>
-                        Mis Préstamos
-                    </a>
-                    @endcan
-
                     @can('ver lotes')
                     <a href="{{ route('lotes.index')}}" class="texto boton">
                         <i class="fa-solid fa-boxes-stacked"></i>

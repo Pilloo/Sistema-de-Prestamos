@@ -86,7 +86,7 @@ class RolePermissionSeeder extends Seeder
 
         $adminRole->givePermissionTo(Permission::all());
         $guestRole->syncPermissions([
-            'ver mis prestamos',
+            'ver mis solicitudes',
         ]);
     }
 }

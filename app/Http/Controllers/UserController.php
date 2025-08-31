@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Spatie\Permission\Models\Role;
@@ -138,7 +138,12 @@ class UserController extends Controller
             DB::rollBack();
             return back()->withErrors(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()]);
         }
-        return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente');
+        // Redirige según el permiso
+        if (Auth::user() && Auth::user()->can('editar perfil avanzado')) {
+            return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente');
+        } else {
+            return redirect()->route('users.show', $user->id)->with('success', 'Usuario actualizado correctamente');
+        }
     }
 
     /**

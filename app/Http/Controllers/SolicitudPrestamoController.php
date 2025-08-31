@@ -8,6 +8,7 @@ use App\Models\EstadoSolicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class SolicitudPrestamoController extends Controller
 {
@@ -17,7 +18,7 @@ class SolicitudPrestamoController extends Controller
     public function misSolicitudes()
     {
         $solicitudes = SolicitudPrestamo::with(['solicitante', 'estadoSolicitud'])
-            ->where('id_solicitante', auth()->id())
+            ->where('id_solicitante', Auth::user() ? Auth::user()->id : null)
             ->orderBy('id', 'desc')
             ->get();
         return view('solicitud.index', compact('solicitudes'));
@@ -196,9 +197,10 @@ class SolicitudPrestamoController extends Controller
 
         try {
             DB::transaction(function () use ($cart, $request) {
-                // Create the loan request
+                // Si el admin seleccionó un usuario, asociar la solicitud a ese usuario
+                $idSolicitante = $request->has('user_id') ? $request->input('user_id') : (Auth::user() ? Auth::user()->id : null);
                 $solicitud = SolicitudPrestamo::create([
-                    'id_solicitante' => auth()->id(),
+                    'id_solicitante' => $idSolicitante,
                     'fecha_solicitud' => now(),
                     'fecha_limite_solicitada' => $cart[0]['fecha_limite'], // Use first item's due date
                     'detalle' => $request->detalle ?? 'Solicitud de préstamo de equipos',
@@ -240,10 +242,12 @@ class SolicitudPrestamoController extends Controller
         }
 
         DB::transaction(function () use ($solicitud) {
-            // Cambiar estado a aceptada (por ejemplo, 2)
+            // Cambiar estado a aceptada (por ejemplo, 2) y registrar datos de préstamo
             $solicitud->update([
                 'id_estado_solicitud' => 2, // aceptada
-                'id_tecnico_aprobador' => auth()->id()
+                'id_tecnico_aprobador' => (Auth::user() ? Auth::user()->id : null),
+                'fecha_entrega' => now(),
+                'estado_prestamo' => 'Prestado / Entregado'
             ]);
 
             // Obtener el id del estado "En préstamo"
@@ -260,15 +264,6 @@ class SolicitudPrestamoController extends Controller
                     $equipo->save();
                 }
             }
-
-            // Crear el préstamo asociado
-            $estadoPrestamo = \App\Models\EstadoPrestamo::where('nombre', 'Prestado / Entregado')->first();
-            \App\Models\Prestamo::create([
-                'id_solicitante' => $solicitud->id_solicitante,
-                'id_aprobador' => auth()->id(),
-                'id_estado_prestamo' => $estadoPrestamo ? $estadoPrestamo->id : null,
-                'id_solicitud' => $solicitud->id
-            ]);
         });
 
         return redirect()->back()->with('success', 'Solicitud aceptada correctamente.');
@@ -287,7 +282,7 @@ class SolicitudPrestamoController extends Controller
 
         $solicitud->update([
             'id_estado_solicitud' => 3, // rechazada
-            'id_tecnico_aprobador' => auth()->id()
+            'id_tecnico_aprobador' => (Auth::user() ? Auth::user()->id : null)
         ]);
 
         return redirect()->back()->with('success', 'Solicitud rechazada correctamente.');

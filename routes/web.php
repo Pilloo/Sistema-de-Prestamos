@@ -47,10 +47,6 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     // Mis Solicitudes y Mis Préstamos
     Route::get('/mis-solicitudes', [\App\Http\Controllers\SolicitudPrestamoController::class, 'misSolicitudes'])->name('solicitud.misSolicitudes');
-    Route::get('/mis-prestamos', [\App\Http\Controllers\PrestamoController::class, 'misPrestamos'])->name('prestamos.misPrestamos');
-    // Préstamos
-    Route::get('/prestamos', [\App\Http\Controllers\PrestamoController::class, 'index'])->name('prestamos.index');
-    Route::get('/prestamos/{id}', [\App\Http\Controllers\PrestamoController::class, 'show'])->name('prestamos.show');
     // Equipment selection and cart routes
     Route::get('/solicitud/create', [SolicitudPrestamoController::class, 'create'])->name('solicitud.create');
     Route::get('/solicitud/cart', [SolicitudPrestamoController::class, 'cart'])->name('solicitud.cart');

@@ -1,0 +1,60 @@
+
+body {
+    background-image: url("/img/template/fondoPrincipal.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.panel {
+
+border-radius: 20px;
+padding: 24px;
+box-shadow: 0 18px 32px rgba(25, 24, 24, 0.452);
+}
+.panel h2 {
+font-weight: 700;
+font-size: 1.4rem;
+}
+.btn-success {
+border-radius: 10px;
+font-weight: 500;
+}
+.table {
+border-radius: 15px;
+overflow: hidden;
+}
+thead {
+background: #f0f2f5;
+}
+.badge {
+font-size: 0.85rem;
+padding: 0.5em 0.8em;
+border-radius: 12px;
+}
+.btn-sm {
+border-radius: 8px;
+font-weight: 500;
+}
+/* Hover bonito en filas */
+tbody tr:hover {
+background-color: #f9fafc;
+}
+
+.btn-agregar{
+    background-color: #1e73be !important; /*Azul claro*/
+    color: #fff !important;
+}
+.btn-activo{
+    background-color: #329b46 !important;
+    color: #fff !important;
+}
+.btn-editar{
+    background-color: #1e73be !important; /*Azul claro*/
+    color: #fff !important;
+}
+.btn-eliminar{
+    background-color: #b85a05 !important;
+    color: #fff !important;
+}

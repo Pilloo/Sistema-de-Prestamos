@@ -9,7 +9,7 @@
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link href="{{ asset('css/categorias.css') }}" rel="stylesheet" />
+<link href="{{ asset('css/solicitud.css') }}" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -30,50 +30,47 @@ Swal.fire({
 <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<style>
-  body {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
-</style>
+<body>
+  <div class="container py-5">
+      <div class="panel bg-white shadow rounded-4 p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2>Listado de Solicitudes de Préstamo</h2>
+              <!-- Si necesitas un botón de agregar -->
+              {{-- <button class="btn btn-agregar" data-bs-toggle="modal" data-bs-target="#crearSolicitudModal">+ Nueva Solicitud</button> --}}
+          </div>
 
-<div class="container py-5">
-    <div class="panel">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Listado de Solicitudes de Préstamo</h2>
-            <!-- Si necesitas un botón de agregar -->
-            {{-- <button class="btn btn-agregar" data-bs-toggle="modal" data-bs-target="#crearSolicitudModal">+ Nueva Solicitud</button> --}}
-        </div>
+          <div class="table-responsive">
+              <table id="tablaSolicitudes" class="table align-middle">
+                  <thead>
+                      <tr>
+                          <th>ID</th>
+                          <th>Solicitante</th>
+                          <th>Fecha Solicitud</th>
+                          <th>Fecha Límite</th>
+                          <th>Estado</th>
+                          <th>Acciones</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach($solicitudes as $solicitud)
+                      <tr>
+                          <td>{{ $solicitud->id }}</td>
+                          <td>{{ $solicitud->solicitante->name ?? 'N/A' }}</td>
+                          <td>{{ $solicitud->fecha_solicitud->format('d/m/Y') }}</td>
+                          <td>{{ $solicitud->fecha_limite_solicitada->format('d/m/Y') }}</td>
+                          <td>{{ $solicitud->estadoSolicitud->nombre ?? 'N/A' }}</td>
+                          <td>
+                              <a href="{{ route('solicitud.show', $solicitud->id) }}" class="btn btn-info btn-sm">Ver Detalle</a>
+                          </td>
+                      </tr>
+                      @endforeach
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+</body>
 
-        <div class="table-responsive">
-            <table id="tablaSolicitudes" class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Solicitante</th>
-                        <th>Fecha Solicitud</th>
-                        <th>Fecha Límite</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($solicitudes as $solicitud)
-                    <tr>
-                        <td>{{ $solicitud->id }}</td>
-                        <td>{{ $solicitud->solicitante->name ?? 'N/A' }}</td>
-                        <td>{{ $solicitud->fecha_solicitud->format('d/m/Y') }}</td>
-                        <td>{{ $solicitud->fecha_limite_solicitada->format('d/m/Y') }}</td>
-                        <td>{{ $solicitud->estadoSolicitud->nombre ?? 'N/A' }}</td>
-                        <td>
-                            <a href="{{ route('solicitud.show', $solicitud->id) }}" class="btn btn-info btn-sm">Ver Detalle</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('js')
