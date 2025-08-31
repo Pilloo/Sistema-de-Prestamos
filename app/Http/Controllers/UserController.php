@@ -129,9 +129,12 @@ class UserController extends Controller
             }
 
             $user->update($data);
-            $user->syncRoles($request->role);
+            // Solo sincroniza el rol si el campo viene en la petición
+            if ($request->has('role')) {
+                $user->syncRoles($request->role);
+            }
             DB::commit();
-        }catch(\Exception $e){
+        }catch(Exception $e){
             DB::rollBack();
             return back()->withErrors(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()]);
         }

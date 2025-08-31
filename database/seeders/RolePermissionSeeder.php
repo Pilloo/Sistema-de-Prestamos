@@ -72,6 +72,8 @@ class RolePermissionSeeder extends Seeder
             'gestionar solicitudes',
             //ver informacion perfil
             'ver rol perfil',
+            //editar perfil admin
+            'editar perfil avanzado',
 
         ];
 
