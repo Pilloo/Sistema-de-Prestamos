@@ -60,12 +60,13 @@ body {
     margin-bottom: 20px;      /* espacio entre el título y los botones */
     font-size: 28px;          /* tamaño del título */
     font-weight: 600;         /* opcional, más negrita */
-    color: #000000;           /* opcional, mismo color de botones */
+    color: #0056b3;           /* opcional, mismo color de botones */
 }
 .titulo{
     margin-top: 5vh;
     align-items: center;
     justify-content: center;
+    margin-bottom: 5vh;
 }
 
 /* Responsive: bajan de fila sin cambiar tamaño */
@@ -80,3 +81,4 @@ body {
         grid-template-columns: 1fr;
     }
 }
+

@@ -44,11 +44,12 @@ Toast.fire({
 <body id="homeContent">
     
     <div class="container">
-        <div class="titulo">
-            <h2 class="titulo-principal fw-bold">Sistema de Préstamos</h2>
-        </div>
+        
        
         <div class="card principal mx-auto">
+            <div class="titulo">
+            <h2 class="titulo-principal fw-bold">Sistema de Préstamos</h2>
+        </div>
             
             <div class="card-body">
                 
