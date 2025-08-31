@@ -8,7 +8,9 @@ use App\Models\Seccione;
 use App\Models\Departamento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Exception;
 
 class RegisterController extends Controller
 {
@@ -30,19 +32,26 @@ class RegisterController extends Controller
 
     public function register(RegisterUserRequest $request)
     {
-        $data = $request->validated();
-        $data['password'] = Hash::make($data['password']);
+        try{
+            DB::beginTransaction();
+            $data = $request->validated();
+            $data['password'] = Hash::make($data['password']);
 
-        if ($request->hasFile('img_path')) {
-            $file = $request->file('img_path');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('img/users'), $filename);
-            $data['img_path'] = $filename;
+            if ($request->hasFile('img_path')) {
+                $file = $request->file('img_path');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('img/users'), $filename);
+                $data['img_path'] = $filename;
+            }
+
+            $user = User::create($data);
+            $user->assignRole('invitado');
+            Auth::login($user);
+            DB::commit();
+            return redirect()->route('home')->with('success', 'Usuario registrado correctamente.');
+        }catch(Exception $e){
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al registrar usuario: ' . $e->getMessage());
         }
-
-        $user = User::create($data);
-        $user->assignRole('invitado');
-        Auth::login($user);
-        return redirect()->route('home')->with('success', 'Usuario registrado correctamente.');
     }
 }

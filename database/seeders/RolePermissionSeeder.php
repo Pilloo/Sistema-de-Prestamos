@@ -18,6 +18,7 @@ class RolePermissionSeeder extends Seeder
         $guestRole = Role::firstOrCreate(['name' => 'invitado']);
 
         $permisos = [
+            'visualizar sidebar',
             'ver categorias',
             'crear categorias',
             'editar categorias',
@@ -69,6 +70,8 @@ class RolePermissionSeeder extends Seeder
             'ver mis solicitudes',
             'ver mis prestamos',
             'gestionar solicitudes',
+            //ver informacion perfil
+            'ver rol perfil',
 
         ];
 
@@ -81,9 +84,7 @@ class RolePermissionSeeder extends Seeder
 
         $adminRole->givePermissionTo(Permission::all());
         $guestRole->syncPermissions([
-            'ver mis solicitudes',
             'ver mis prestamos',
-            'crear solicitudes',
         ]);
     }
 }

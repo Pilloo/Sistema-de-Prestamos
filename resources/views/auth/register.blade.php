@@ -8,10 +8,15 @@
   <!-- Bootstrap y FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     body {
-      background-color: #f5f5f5;
+      background-image: url("/img/template/fondoPrincipal.jpg");
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -30,7 +35,7 @@
     }
 
     .card-custom {
-      background-color: #e6e6e6;
+      background-color: #c4c4c4;
       padding: 2rem 2.5rem;
       border-radius: 15px;
       max-width: 550px;
@@ -106,6 +111,42 @@
 </head>
 <body>
 
+
+@if(session('success'))
+<script>
+Swal.fire({
+  toast: true,
+  position: "top-end",
+  icon: "success",
+  title: "{{ session('success') }}",
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true
+});
+</script>
+@endif
+@if(session('error'))
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Error',
+  text: "{{ session('error') }}",
+  confirmButtonText: 'Cerrar'
+});
+</script>
+@endif
+
+@if ($errors->any())
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Error de validación',
+  html: `{!! implode('<br>', $errors->all()) !!}`,
+  confirmButtonText: 'Cerrar'
+});
+</script>
+@endif
+
 <div class="card-custom">
   <p class="p">Registro</p>
 
@@ -141,7 +182,7 @@
 
     <div class="mt-3 position-relative text-start">
       <i class="fas fa-envelope input-icon"></i>
-      <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Correo electrónico" required />
+      <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required />
     </div>
 
     <!-- Departamento -->
@@ -176,11 +217,11 @@
       @enderror
     </div>
 
-
     <div class="mt-3 position-relative text-start">
       <i class="fas fa-lock input-icon"></i>
       <input type="password" class="form-control" name="password" placeholder="Contraseña" required />
     </div>
+    <small class="text-muted d-block mt-1" style="margin-left:2.5rem;">La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&).</small>
 
     <div class="mt-3 position-relative text-start">
       <i class="fas fa-lock input-icon"></i>
@@ -199,6 +240,21 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('form-registro').addEventListener('submit', function(e) {
+    var pass = document.querySelector('input[name="password"]').value;
+    var passConfirm = document.querySelector('input[name="password_confirmation"]').value;
+    if (pass !== passConfirm) {
+      e.preventDefault();
+      Swal.fire({
+        icon: 'error',
+        title: 'Las contraseñas no coinciden',
+        text: 'Por favor, asegúrate de que ambas contraseñas sean iguales.',
+        confirmButtonText: 'Cerrar'
+      });
+    }
+  });
+</script>
 <script>
   const estudianteRadio = document.getElementById("estudiante");
   const funcionarioRadio = document.getElementById("funcionario");

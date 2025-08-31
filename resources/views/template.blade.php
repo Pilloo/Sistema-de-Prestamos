@@ -28,21 +28,22 @@
 
 <body>
 
+    
+    <x-navigation-header />
+    
+
     <div class="wrapper">
-        <!-- Sidebar -->
+        @can('visualizar sidebar')
         <x-navigation-menu />
+        @endcan
 
-        <!-- Contenido principal -->
         <div class="main">
-        <!--<x-navigation-header />-->
+            <main class="contenido">
+                @yield('content')
+            </main>
 
-        <main class="contenido">
-            @yield('content')
-        </main>
-
-        <x-footer />
+            <x-footer />
         </div>
-        
     </div>
     
 

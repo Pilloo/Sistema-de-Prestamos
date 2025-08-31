@@ -6,6 +6,10 @@
 
 /* Sidebar */
 .sidebar {
+  position: fixed;
+  top: 70px; /* la misma altura del header */
+  left: 0;
+  bottom: 0;
   width: 90px;
   background-color: #343a40;
   color: white;
@@ -65,19 +69,24 @@
   border-radius: 0.5rem;
 }
 
+.sidebar:hover ~ .main {
+  margin-left: 250px; /* ancho del sidebar expandido */
+}
+
 /* Main content */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding-top: 70px; /* altura del header */
 }
+
 
 /* Contenido */
 .contenido {
   flex-grow: 1;
   padding: 2rem;
-  background-color: #fff;
   overflow-y: auto;
 }
 

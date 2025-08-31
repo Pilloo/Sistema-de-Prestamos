@@ -8,25 +8,50 @@
   <!-- Bootstrap y FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link href="{{ asset('css/login.css') }}" rel="stylesheet" />
 </head>
 <body>
+
+@if(session('success'))
+<script>
+Swal.fire({
+  toast: true,
+  position: "top-end",
+  icon: "success",
+  title: "{{ session('success') }}",
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true
+});
+</script>
+@endif
+@if(session('error'))
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Error',
+  text: "{{ session('error') }}",
+  confirmButtonText: 'Cerrar'
+});
+</script>
+@endif
+
+@if ($errors->any())
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Error de validación',
+  html: `{!! implode('<br>', $errors->all()) !!}`,
+  confirmButtonText: 'Cerrar'
+});
+</script>
+@endif
 
   <div class="card-custom text-center">
 
     <img src="/img/template/TI_BN.png" alt="Logo" class="logo" />
 
-    <!--Validacion de errores-->
-    @if ($errors->any())
-      @foreach ($errors->all() as $error)
-        <div class="alert alert-danger alert-dismissible fade show text-start" role="alert">
-          {{ $error }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      @endforeach
-    @endif
-
-    <!--Validacion de errores-->
     <form method="POST" action="/login">
       @csrf
 
