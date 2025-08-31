@@ -32,8 +32,8 @@
   /* Hover bonito en filas */
   tbody tr:hover {
     background-color: #f9fafc;
-    
   }
+  
   .btn-agregar{
       background-color: #1e73be !important; /*Azul claro*/
       color: #fff !important;

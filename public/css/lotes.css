@@ -1,12 +1,12 @@
 
 body {
-    background-image: url(public/img/template/fondoPrincipal.jpg) !important;
+    background-image: url("/img/template/fondoPrincipal.jpg");
     background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
-    
-     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
+    background-attachment: fixed;
 }
+
 .panel {
     background: #fff;
     border-radius: 20px;

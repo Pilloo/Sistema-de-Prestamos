@@ -85,6 +85,17 @@
 
             <form action="{{ route('solicitud.store') }}" method="POST" class="mt-4">
                 @csrf
+                    @can('gestionar solicitudes')
+                    <div class="mb-3">
+                        <label for="user_id" class="form-label">Seleccionar usuario solicitante</label>
+                        <select name="user_id" id="user_id" class="form-select" required>
+                            <option value="" disabled selected>Seleccione un usuario</option>
+                            @foreach(App\Models\User::all() as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endcan
                 <div class="mb-3">
                     <label for="detalle" class="form-label fw-semibold">Detalles de Solicitud (Optional)</label>
                     <textarea class="form-control rounded-4" id="detalle" name="detalle" rows="2"
