@@ -311,7 +311,7 @@ class SolicitudPrestamoController extends Controller
 
         return redirect()->back()->with('success', 'Solicitud rechazada correctamente.');
     }
-    
+
 
     /**
      * Clear the entire cart
@@ -322,5 +322,32 @@ class SolicitudPrestamoController extends Controller
 
         return redirect()->route('solicitud.create')
             ->with('success', 'Carrito vaciado correctamente.');
+    }
+
+    /**
+     * Realiza la devolución del préstamo.
+     */
+    public function devolver($id)
+    {
+        $solicitud = SolicitudPrestamo::with(['equipos.lote'])->findOrFail($id);
+
+        DB::transaction(function () use ($solicitud) {
+            // Obtener el id del estado "En préstamo"
+            $estadoEnPrestamo = \App\Models\EstadoEquipo::where('nombre', 'Disponible')->first();
+
+            // Disminuir cantidad disponible de cada lote y cambiar estado de equipo
+            foreach ($solicitud->equipos as $equipo) {
+                $lote = $equipo->lote;
+                if ($lote) {
+                    $lote->increment('cantidad_disponible', 1);
+                }
+                if ($estadoEnPrestamo) {
+                    $equipo->estado_equipo_id = $estadoEnPrestamo->id;
+                    $equipo->save();
+                }
+            }
+        });
+
+        return redirect()->back()->with('success', 'Solicitud aceptada correctamente.');
     }
 }
