@@ -11,8 +11,6 @@
 
 @endpush
 
-@section('content')
-
 @if(session('success'))
 <script>
 Swal.fire({
@@ -31,90 +29,94 @@ Swal.fire({
 <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<div class="container py-5">
-    <div class="panel">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Listado de Equipos</h2>
-            <div class="d-flex gap-2">
-                <button type="button" class="btn btn-editar" onclick="openBarcodeModal()">🔍 Búsqueda con lector</button>
+@section('content')
+
+<body>
+    <div class="container py-5">
+        <div class="panel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Listado de Equipos</h2>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-editar" onclick="openBarcodeModal()">🔍 Búsqueda con lector</button>
+                </div>
             </div>
-        </div>
 
-        <div class="table-responsive">
-            <table id="tablaEquipos" class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Equipo</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="equipoBody">
-                    @foreach($equipos as $index => $item)
-                    <tr>
-                        <td>{{ $item->id }}</td>    
-                        <td>{{ $item->lote ? $item->lote->modelo : 'Sin lote' }}</td>
-                        <td>
-                            <span class="badge {{ $item->estado_equipo && $item->estado_equipo->nombre!='Baja / Retirado' ? 'bg-success' : 'bg-secondary' }}">
-                                {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('equipos.show', $item->id) }}" class="btn btn-ver btn-sm">Ver</a>
-                                <form action="{{ route('equipos.edit', ['equipo' => $item]) }}" method="get">
-                                    <button type="submit" class="btn btn-editar btn-sm">Editar</button>
-                                </form> 
-                                @if($item->estado_equipo->nombre!='Baja / Retirado')
-                                    <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Eliminar</button>
-                                @else
-                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Restaurar</button>
-                                @endif 
-                            </div>
-                        </td>
-                    </tr>
-
-
-
-                    <!-- Modal de confirmación eliminar/restaurar -->
-                    <div class="modal fade" id="confirmModal-{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje de confirmación</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="table-responsive">
+                <table id="tablaEquipos" class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Equipo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipoBody">
+                        @foreach($equipos as $index => $item)
+                        <tr>
+                            <td>{{ $item->id }}</td>    
+                            <td>{{ $item->lote ? $item->lote->modelo : 'Sin lote' }}</td>
+                            <td>
+                                <span class="badge {{ $item->estado_equipo && $item->estado_equipo->nombre!='Baja / Retirado' ? 'bg-success' : 'bg-secondary' }}">
+                                    {{ $item->estado_equipo ? $item->estado_equipo->nombre : 'Sin estado' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ route('equipos.show', $item->id) }}" class="btn btn-ver btn-sm">Ver</a>
+                                    <form action="{{ route('equipos.edit', ['equipo' => $item]) }}" method="get">
+                                        <button type="submit" class="btn btn-editar btn-sm">Editar</button>
+                                    </form> 
+                                    @if($item->estado_equipo->nombre!='Baja / Retirado')
+                                        <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Eliminar</button>
+                                    @else
+                                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}">Restaurar</button>
+                                    @endif 
                                 </div>
-                                <div class="modal-body">
-                                    {{ $item->estado_equipo->id != 7 ? '¿Seguro que quieres eliminar el equipo?' : '¿Seguro que quieres restaurar el equipo?' }}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                    <form action="{{ route('equipos.destroy',['equipo'=>$item->id]) }}" method="post">
-                                        @method('DELETE')
-                                        @csrf
-                                        <button type="submit" class="btn {{ $item->estado_equipo->id != 7 ? 'btn-eliminar' : 'btn-success' }}">Confirmar</button>
-                                    </form>
+                            </td>
+                        </tr>
+
+
+
+                        <!-- Modal de confirmación eliminar/restaurar -->
+                        <div class="modal fade" id="confirmModal-{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje de confirmación</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{ $item->estado_equipo->id != 7 ? '¿Seguro que quieres eliminar el equipo?' : '¿Seguro que quieres restaurar el equipo?' }}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <form action="{{ route('equipos.destroy',['equipo'=>$item->id]) }}" method="post">
+                                            @method('DELETE')
+                                            @csrf
+                                            <button type="submit" class="btn {{ $item->estado_equipo->id != 7 ? 'btn-eliminar' : 'btn-success' }}">Confirmar</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    @endforeach
-                </tbody>
-            </table>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Modal para escáner físico -->
-<div id="barcodeModal" class="scanner-modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeBarcodeModal()">&times;</span>
-        <h3>Escanear con lector de código</h3>
-        <input type="text" id="barcodeInput" class="form-control" placeholder="Escanee el código aquí">
+    <!-- Modal para escáner físico -->
+    <div id="barcodeModal" class="scanner-modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeBarcodeModal()">&times;</span>
+            <h3>Escanear con lector de código</h3>
+            <input type="text" id="barcodeInput" class="form-control" placeholder="Escanee el código aquí">
+        </div>
     </div>
-</div>
+</body>
 
 @endsection
 

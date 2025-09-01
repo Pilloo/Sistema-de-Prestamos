@@ -1,9 +1,10 @@
 body {
-    background-image: url(img/130.jpg) !important;
+    background-image: url("/img/template/fondoPrincipal.jpg");
     background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
+    background-attachment: fixed;
+}
   .panel {
     background: #fff;
     border-radius: 20px;
