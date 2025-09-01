@@ -26,65 +26,67 @@ Swal.fire({
 </script>
 @endif
 
-<div class="container py-5">
-    <div class="panel">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Listado de Roles</h2>
-            <a href="{{ route('roles.create') }}" class="btn btn-agregar">+ Añadir nuevo rol</a>
+<body>
+    <div class="container py-5">
+        <div class="panel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Listado de Roles</h2>
+                <a href="{{ route('roles.create') }}" class="btn btn-agregar">+ Añadir nuevo rol</a>
+            </div>
+
+            <div class="table-responsive">
+                <table id="tablaRoles" class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($roles as $item)
+                        <tr>
+                            <td>{{ $item->name }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ route('roles.edit', ['role' => $item]) }}" class="btn btn-editar btn-sm">Editar</a>
+                                    <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $item->id }}">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="table-responsive">
-            <table id="tablaRoles" class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>Rol</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($roles as $item)
-                    <tr>
-                        <td>{{ $item->name }}</td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('roles.edit', ['role' => $item]) }}" class="btn btn-editar btn-sm">Editar</a>
-                                <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $item->id }}">
-                                    Eliminar
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    {{-- Modales de confirmación --}}
-    @foreach ($roles as $item)
-    <div class="modal fade" id="confirmModal-{{ $item->id }}" tabindex="-1" aria-labelledby="modalLabel-{{ $item->id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar eliminación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    ¿Seguro que deseas eliminar el rol <strong>{{ $item->name }}</strong>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <form action="{{ route('roles.destroy', ['role' => $item->id]) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Confirmar</button>
-                    </form>
+        {{-- Modales de confirmación --}}
+        @foreach ($roles as $item)
+        <div class="modal fade" id="confirmModal-{{ $item->id }}" tabindex="-1" aria-labelledby="modalLabel-{{ $item->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Seguro que deseas eliminar el rol <strong>{{ $item->name }}</strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form action="{{ route('roles.destroy', ['role' => $item->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Confirmar</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+        @endforeach
     </div>
-    @endforeach
-</div>
+</body>
 
 @endsection
 

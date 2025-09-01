@@ -1,9 +1,10 @@
 body {
-    background-image: url(img/130.jpg) !important;
+    background-image: url("/img/template/fondoPrincipal.jpg");
     background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
+    background-attachment: fixed;
+}
   .panel {
     background: #fff;
     border-radius: 20px;
@@ -54,3 +55,40 @@ body {
       color: #fff !important;
   }
   
+  .card-custom {
+        border-radius: 1rem;
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 0 20px rgb(0 0 0 / 0.1);
+        max-width: 720px;
+        width: 100%;
+    }
+    .detalle-custom {
+        border-top: 1px solid #e2e8f0;
+        font-size: rem;
+    }
+    .btn-custom {
+        padding: 0.5rem 1.2rem;
+        border: 2px solid #315cfd;
+        border-radius: 30px;
+        background: white;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        color: #315cfd;
+        text-decoration: none;
+    }
+    .btn-custom:hover {
+        background: #315cfd;
+        color: white;
+    }
+    .text-muted-custom {
+        color: #5f5f5f !important;
+    }
+    .card-footer-custom {
+        background-color: transparent;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1rem;
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+    }

@@ -13,7 +13,6 @@
 
 @endpush
 
-@section('content')
 @if(session('success'))
 <script>
 Swal.fire({
@@ -36,83 +35,87 @@ Swal.fire({
   }
 </style>
 
-<div class="container py-5">
-    <div class="panel">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Listado de Categorías</h2>
-            <button class="btn btn-agregar" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">+ Agregar Categoría</button>
-        </div>
+@section('content')
 
-        <!-- Buscador (queda oculto porque DataTables ya tiene buscador integrado) -->
-        {{-- <div class="mb-3">
-            <input type="text" id="buscar" class="form-control" placeholder="Buscar Categoría...">
-        </div> --}}
+<body>
+    <div class="container py-5">
+        <div class="panel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Listado de Categorías</h2>
+                <button class="btn btn-agregar" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">+ Agregar Categoría</button>
+            </div>
 
-        <div class="table-responsive">
-            <table id="tablaCategorias" class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Categoría</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($categorias as $categoria)
-                    <tr>
-                        <td>{{ $categoria->id }}</td>
-                        <td>{{ $categoria->caracteristica->nombre }}</td>
-                        <td>
-                            @if($categoria->caracteristica->estado == 1)
-                                <span class="badge bg-success">Activo</span>
-                            @else
-                                <span class="badge bg-secondary">Inactivo</span>
-                            @endif
-                        </td>
-                        <td>
-                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#editarCategoriaModal-{{ $categoria->id }}">Editar</button>
-                            @if ($categoria->caracteristica->estado == 1)
-                                <button class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Eliminar</button>
-                            @else
-                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Restaurar</button>
-                            @endif
-                        </td>
-                    </tr>
+            <!-- Buscador (queda oculto porque DataTables ya tiene buscador integrado) -->
+            {{-- <div class="mb-3">
+                <input type="text" id="buscar" class="form-control" placeholder="Buscar Categoría...">
+            </div> --}}
 
-                    <!-- Modal Editar -->
-                    <div class="modal fade" id="editarCategoriaModal-{{ $categoria->id }}" tabindex="-1" aria-labelledby="editarCategoriaLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <form action="{{ route('categorias.update', $categoria->id) }}" method="post">
-                                    @csrf
-                                    @method('PATCH')
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Editar Categoría</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <label for="nombreCategoria">Nombre de la categoría</label>
-                                        <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $categoria->caracteristica->nombre) }}">
-                                        @error('nombre')
-                                            <small class="text-danger">{{ '*'.$message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary">Actualizar</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    </div>
-                                </form>
+            <div class="table-responsive">
+                <table id="tablaCategorias" class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Categoría</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($categorias as $categoria)
+                        <tr>
+                            <td>{{ $categoria->id }}</td>
+                            <td>{{ $categoria->caracteristica->nombre }}</td>
+                            <td>
+                                @if($categoria->caracteristica->estado == 1)
+                                    <span class="badge bg-success">Activo</span>
+                                @else
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                @endif
+                            </td>
+                            <td>
+                                <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#editarCategoriaModal-{{ $categoria->id }}">Editar</button>
+                                @if ($categoria->caracteristica->estado == 1)
+                                    <button class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Eliminar</button>
+                                @else
+                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal-{{ $categoria->id }}">Restaurar</button>
+                                @endif
+                            </td>
+                        </tr>
+
+                        <!-- Modal Editar -->
+                        <div class="modal fade" id="editarCategoriaModal-{{ $categoria->id }}" tabindex="-1" aria-labelledby="editarCategoriaLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <form action="{{ route('categorias.update', $categoria->id) }}" method="post">
+                                        @csrf
+                                        @method('PATCH')
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Editar Categoría</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label for="nombreCategoria">Nombre de la categoría</label>
+                                            <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $categoria->caracteristica->nombre) }}">
+                                            @error('nombre')
+                                                <small class="text-danger">{{ '*'.$message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    @endforeach
-                </tbody>
-            </table>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
+</body>
 
 @include('categorias.create')
 

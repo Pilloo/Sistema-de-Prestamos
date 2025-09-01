@@ -40,7 +40,8 @@
                 <table class="table align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Articulos</th>
+                            <th>Artículos</th>
+                            <th>Serial</th>
                             <th>Cantidad</th>
                             <th>Fecha</th>
                             <th></th>
@@ -50,6 +51,7 @@
                         @foreach ($cart as $index => $item)
                         <tr>
                             <td>{{ $item['modelo'] }} ({{ $item['marca'] }})</td>
+                            <td>{{ $item['numero_serie'] ?? 'N/A' }}</td>
                             <td>
                                 <form action="{{ route('solicitud.updateCart', $index) }}" method="POST" class="d-flex gap-2">
                                     @csrf
