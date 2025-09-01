@@ -50,8 +50,57 @@
                 <div class="mb-4 d-flex flex-wrap gap-3 align-items-end justify-content-center">
                     <div class="flex-grow-1">
                         <label for="scannerInput" class="form-label fw-medium">Escanear código</label>
-                        <input type="text" id="scannerInput" class="form-control" placeholder="Escanea el código de serie...">
+                        <div class="input-group">
+                            <input type="text" id="scannerInput" class="form-control" placeholder="Escanea el código de serie...">
+                            <button type="button" class="btn btn-outline-dark" onclick="openModal()"><i class="bi bi-camera"></i> Escanear con cámara</button>
+                        </div>
                     </div>
+                <!-- Modal Scanner -->
+                <style>
+                #qrModal {
+                    display: none;
+                    position: fixed;
+                    z-index: 9999;
+                    left: 0;
+                    top: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(0,0,0,0.4);
+                    justify-content: center;
+                    align-items: center;
+                }
+                #qrModal .modal-content {
+                    background: #fff;
+                    border-radius: 1rem;
+                    max-width: 400px;
+                    width: 90vw;
+                    margin: auto;
+                    padding: 2rem 1.5rem;
+                    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+                    position: relative;
+                    top: 10vh;
+                }
+                #qrModal .close {
+                    position: absolute;
+                    right: 1rem;
+                    top: 1rem;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                }
+                #reader {
+                    width: 100%;
+                    min-height: 220px;
+                    margin-bottom: 1rem;
+                }
+                </style>
+                <div id="qrModal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h5 class="mb-3">Escanear código QR</h5>
+                        <div id="reader"></div>
+                        <div id="result" class="mt-2"><em>Esperando escaneo...</em></div>
+                    </div>
+                </div>
                     <div>
                         <label for="filtroCategoria" class="form-label fw-medium">Categoría</label>
                         <select id="filtroCategoria" class="form-select">
@@ -161,6 +210,7 @@
 @endsection
 
 @push('js')
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -316,5 +366,34 @@ cartModal.addEventListener('show.bs.modal', function(event) {
         }
     });
 });
+
+function openModal() {
+    document.getElementById('qrModal').style.display = 'block';
+    if (!window.qrScannerInitialized) {
+        window.qrScannerInitialized = true;
+        const qrReader = new Html5Qrcode("reader");
+        qrReader.start({ facingMode: "environment" }, {
+            fps: 10,
+            qrbox: 250
+        }, qrCodeMessage => {
+            document.getElementById('result').innerHTML = `<span class='text-success'>${qrCodeMessage}</span>`;
+            document.getElementById('scannerInput').value = qrCodeMessage;
+            qrReader.stop();
+            setTimeout(() => closeModal(), 800);
+        }, errorMessage => {
+            // Opcional: mostrar errores
+        });
+        window.qrReader = qrReader;
+    } else {
+        window.qrReader?.resume();
+    }
+}
+function closeModal() {
+    document.getElementById('qrModal').style.display = 'none';
+    window.qrReader?.stop();
+    document.getElementById('result').innerHTML = '<em>Esperando escaneo...</em>';
+}
+
 </script>
+
 @endpush
