@@ -12,40 +12,10 @@
         <i class="fas fa-user"></i><span class="TextoNav">Perfil</span>
     </a>
 
-    <!-- Solicitudes -->
-    @can('ver solicitudes')
-    <a href="{{ route('solicitud.index') }}" class="texto">
-        <i class="fas fa-clipboard-list"></i><span class="TextoNav">Prestamos</span>
-    </a>
-    @endcan
-
-    <!-- Crear Solicitud -->
-    @can('crear solicitudes')
-    <a href="{{ route('solicitud.create') }}" class="texto">
-        <i class="fa-solid fa-circle-question"></i><span class="TextoNav">Solicitar Préstamo</span>
-    </a>
-    @endcan
-
-  
-
-    <!-- Equipos -->
-    @can('ver equipos')
-    <a href="{{ route('equipos.index')}}" class="texto">
-        <i class="fas fa-laptop"></i><span class="TextoNav">Equipos</span>
-    </a>
-    @endcan
-
-    <!-- Lotes -->
-    @can('ver lotes')
-    <a href="{{ route('lotes.index')}}" class="texto">
-        <i class="fas fa-boxes-stacked"></i><span class="TextoNav">Lotes</span>
-    </a>
-    @endcan
-
-    <!-- Inventario -->
-    @can('ver inventario')
-    <a href="{{ route('equipos.inventario')}}" class="texto">
-        <i class="fas fa-box-open"></i><span class="TextoNav">Inventario</span>
+     <!-- Usuarios -->
+    @can('ver usuarios')
+    <a href="{{ route('users.index')}}" class="texto">
+        <i class="fas fa-users"></i><span class="TextoNav">Usuarios</span>
     </a>
     @endcan
 
@@ -56,12 +26,45 @@
     </a>
     @endcan
 
-    <!-- Usuarios -->
-    @can('ver usuarios')
-    <a href="{{ route('users.index')}}" class="texto">
-        <i class="fas fa-users"></i><span class="TextoNav">Usuarios</span>
+
+       <!-- Crear Solicitud -->
+    @can('crear solicitudes')
+    <a href="{{ route('solicitud.create') }}" class="texto">
+        <i class="fa-solid fa-circle-question"></i><span class="TextoNav">Solicitar Préstamo</span>
     </a>
     @endcan
+
+    <!-- Solicitudes -->
+    @can('ver solicitudes')
+    <a href="{{ route('solicitud.index') }}" class="texto">
+        <i class="fas fa-clipboard-list"></i><span class="TextoNav">Prestamos</span>
+    </a>
+    @endcan
+
+      <!-- Lotes -->
+    @can('ver lotes')
+    <a href="{{ route('lotes.index')}}" class="texto">
+        <i class="fas fa-boxes-stacked"></i><span class="TextoNav">Lotes</span>
+    </a>
+    @endcan
+
+
+    <!-- Equipos -->
+    @can('ver equipos')
+    <a href="{{ route('equipos.index')}}" class="texto">
+        <i class="fas fa-laptop"></i><span class="TextoNav">Equipos</span>
+    </a>
+    @endcan
+
+
+    <!-- Inventario -->
+    @can('ver inventario')
+    <a href="{{ route('equipos.inventario')}}" class="texto">
+        <i class="fas fa-box-open"></i><span class="TextoNav">Inventario</span>
+    </a>
+    @endcan
+
+   
 
     <!-- Departamentos -->
     @can('ver departamentos')
