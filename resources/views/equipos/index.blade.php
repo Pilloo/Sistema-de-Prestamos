@@ -36,9 +36,6 @@ Swal.fire({
         <div class="panel">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Listado de Equipos</h2>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-editar" onclick="openBarcodeModal()">🔍 Búsqueda con lector</button>
-                </div>
             </div>
 
             <div class="table-responsive">

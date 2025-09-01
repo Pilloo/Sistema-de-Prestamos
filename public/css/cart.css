@@ -1,0 +1,35 @@
+body {
+    background-image: url("/img/template/fondoPrincipal.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.card-custom {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+.btn-pill {
+    border-radius: 30px;
+    padding: 0.45rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+.badge-cart {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+}
+.empty-cart {
+    padding: 4rem 1rem;
+    color: #6c757d;
+}
+table th {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+table td {
+    font-size: 0.95rem;
+}

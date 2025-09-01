@@ -26,12 +26,16 @@
     </a>
     @endcan
 
-  
-
-    <!-- Equipos -->
-    @can('ver equipos')
-    <a href="{{ route('equipos.index')}}" class="texto">
-        <i class="fas fa-laptop"></i><span class="TextoNav">Equipos</span>
+    <!-- Categorías -->
+    @can('ver categorias')
+    <a href="{{ route('categorias.index')}}" class="texto">
+        <i class="fas fa-tags"></i><span class="TextoNav">Categorías</span>
+    </a>
+    @endcan
+       <!-- Marcas -->
+    @can('ver marcas')
+    <a href="{{ route('marcas.index')}}" class="texto">
+        <i class="fas fa-trademark"></i><span class="TextoNav">Marcas</span>
     </a>
     @endcan
 
@@ -39,6 +43,13 @@
     @can('ver lotes')
     <a href="{{ route('lotes.index')}}" class="texto">
         <i class="fas fa-boxes-stacked"></i><span class="TextoNav">Lotes</span>
+    </a>
+    @endcan
+
+    <!-- Equipos -->
+    @can('ver equipos')
+    <a href="{{ route('equipos.index')}}" class="texto">
+        <i class="fas fa-laptop"></i><span class="TextoNav">Equipos</span>
     </a>
     @endcan
 
@@ -74,18 +85,6 @@
     @can('ver secciones')
     <a href="{{ route('secciones.index')}}" class="texto">
         <i class="fas fa-th-large"></i><span class="TextoNav">Secciones</span>
-    </a>
-    @endcan
-      <!-- Categorías -->
-    @can('ver categorias')
-    <a href="{{ route('categorias.index')}}" class="texto">
-        <i class="fas fa-tags"></i><span class="TextoNav">Categorías</span>
-    </a>
-    @endcan
-       <!-- Marcas -->
-    @can('ver marcas')
-    <a href="{{ route('marcas.index')}}" class="texto">
-        <i class="fas fa-trademark"></i><span class="TextoNav">Marcas</span>
     </a>
     @endcan
     
