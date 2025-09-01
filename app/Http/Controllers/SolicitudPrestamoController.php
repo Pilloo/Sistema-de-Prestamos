@@ -52,7 +52,7 @@ class SolicitudPrestamoController extends Controller
      */
     public function create()
     {
-        $lotes = LoteEquipo::with(['marca', 'categorias'])
+        $lotes = LoteEquipo::with(['marca', 'categorias', 'equipos.estado_equipo'])
             ->where('cantidad_disponible', '>', 0)
             ->get();
 
@@ -101,6 +101,7 @@ class SolicitudPrestamoController extends Controller
         $validator = Validator::make($request->all(), [
             'lote_id' => 'required|exists:lote_equipos,id',
             'cantidad' => 'required|integer|min:1',
+            'equipo_id' => 'required|array|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -120,34 +121,49 @@ class SolicitudPrestamoController extends Controller
         // Get current cart
         $cart = session()->get('equipment_cart', []);
 
-        // Obtener el número de serie del primer equipo disponible en el lote
-        $equipoSerial = optional($lote->equipos()->first())->numero_serie ?? 'N/A';
-
-        // Check if item already in cart
-        $existingIndex = collect($cart)->search(function ($item) use ($request) {
-            return $item['lote_id'] == $request->lote_id;
-        });
-
-        if ($existingIndex !== false) {
-            // Update existing item
-            $cart[$existingIndex]['cantidad'] = $request->cantidad;
-        } else {
-            // Add new item
-            $cart[] = [
-                'lote_id' => $request->lote_id,
-                'modelo' => $lote->modelo,
-                'marca' => $lote->marca->nombre,
-                'categoria' => $lote->categorias->first()->nombre ?? 'Sin categoría',
-                'cantidad' => $request->cantidad,
-                'max_disponible' => $lote->cantidad_disponible,
-                'numero_serie' => $equipoSerial
-            ];
+        // Obtener los equipos seleccionados por serial
+        $equipoIds = $request->equipo_id;
+        $seriales = [];
+        foreach ($equipoIds as $eid) {
+            $equipo = \App\Models\Equipo::find($eid);
+            if ($equipo) {
+                $seriales[] = $equipo->numero_serie;
+            }
         }
 
+        // Filtrar los equipos que ya están en el carrito (por id)
+        $equiposEnCarrito = collect($cart)->flatMap(function ($item) {
+            return is_array($item['equipo_id']) ? $item['equipo_id'] : [$item['equipo_id']];
+        })->toArray();
+
+        $nuevosEquipos = [];
+        foreach ($equipoIds as $index => $eid) {
+            if (!in_array($eid, $equiposEnCarrito)) {
+                $nuevosEquipos[] = [
+                    'lote_id' => $request->lote_id,
+                    'modelo' => $lote->modelo,
+                    'marca' => $lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : ($lote->marca->nombre ?? 'Sin marca'),
+                    'categoria' => $lote->categorias->first()->nombre ?? 'Sin categoría',
+                    'cantidad' => 1,
+                    'max_disponible' => $lote->cantidad_disponible,
+                    'equipo_id' => [$eid],
+                    'numero_serie' => $seriales[$index]
+                ];
+            }
+        }
+
+        // Si no hay nuevos equipos, mostrar error
+        if (empty($nuevosEquipos)) {
+            return redirect()->back()
+                ->with('error', 'Los equipos seleccionados ya están en el carrito.');
+        }
+
+        // Agregar los nuevos equipos al carrito
+        $cart = array_merge($cart, $nuevosEquipos);
         session()->put('equipment_cart', $cart);
 
         return redirect()->route('solicitud.cart')
-            ->with('success', 'Equipo agregado al carrito correctamente.');
+            ->with('success', 'Equipo(s) agregado(s) al carrito correctamente.');
     }
 
     /**
@@ -191,9 +207,21 @@ class SolicitudPrestamoController extends Controller
 
         $cart[$index]['cantidad'] = $request->cantidad;
         $cart[$index]['fecha_limite'] = $request->fecha_limite;
-
+        if ($request->has('equipo_id')) {
+            // Permitir múltiples equipos seleccionados
+            $equipoIds = is_array($request->equipo_id) ? $request->equipo_id : [$request->equipo_id];
+            $cart[$index]['equipo_id'] = $equipoIds;
+            // Actualizar los seriales para mostrar en el carrito
+            $seriales = [];
+            foreach ($equipoIds as $eid) {
+                $equipo = \App\Models\Equipo::find($eid);
+                if ($equipo) {
+                    $seriales[] = $equipo->numero_serie;
+                }
+            }
+            $cart[$index]['numero_serie'] = implode(', ', $seriales);
+        }
         session()->put('equipment_cart', $cart);
-
         return redirect()->route('solicitud.cart')
             ->with('success', 'Carrito actualizado correctamente.');
     }
@@ -237,22 +265,22 @@ class SolicitudPrestamoController extends Controller
                     'id_tecnico_aprobador' => Auth::user() ? Auth::user()->id : null
                 ]);
 
-                // Process each equipment lot
+                // Procesar cada equipo individual seleccionado por serial
                 foreach ($cart as $item) {
                     $lote = LoteEquipo::findOrFail($item['lote_id']);
-
-                    $equipos = $lote->equipos()->whereDoesntHave('prestamos')->limit($item['cantidad'])->get();
-                    $solicitud->equipos()->attach($equipos->pluck('id')->toArray());
-                        // Disminuir la cantidad disponible del lote
-                        $lote->decrement('cantidad_disponible', $item['cantidad']);
-                            // Cambiar estado de los equipos a 'En préstamo'
+                    $equipoIds = is_array($item['equipo_id'] ?? null) ? $item['equipo_id'] : (isset($item['equipo_id']) ? [$item['equipo_id']] : []);
+                    foreach ($equipoIds as $eid) {
+                        $equipo = \App\Models\Equipo::find($eid);
+                        if ($equipo) {
+                            $solicitud->equipos()->attach($equipo->id);
+                            $lote->decrement('cantidad_disponible', 1);
                             $estadoEnPrestamo = \App\Models\EstadoEquipo::where('nombre', 'En préstamo')->first();
                             if ($estadoEnPrestamo) {
-                                foreach ($equipos as $equipo) {
-                                    $equipo->estado_equipo_id = $estadoEnPrestamo->id;
-                                    $equipo->save();
-                                }
+                                $equipo->estado_equipo_id = $estadoEnPrestamo->id;
+                                $equipo->save();
                             }
+                        }
+                    }
                 }
             });
 
@@ -343,13 +371,21 @@ class SolicitudPrestamoController extends Controller
     {
         $serial = $request->input('serial');
         if (!$serial) {
-            return response()->json(['success' => false, 'message' => 'No se proporcionó número de serial.'], 400);
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'No se proporcionó número de serial.'], 400);
+            } else {
+                return redirect()->route('solicitud.cart')->with('error', 'No se proporcionó número de serial.');
+            }
         }
 
         // Buscar el equipo por serial
         $equipo = \App\Models\Equipo::where('numero_serie', $serial)->first();
         if (!$equipo) {
-            return response()->json(['success' => false, 'message' => 'No se encontró equipo con ese número de serial.'], 404);
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'No se encontró equipo con ese número de serial.'], 404);
+            } else {
+                return redirect()->route('solicitud.cart')->with('error', 'No se encontró equipo con ese número de serial.');
+            }
         }
 
         // Verificar si el equipo está disponible (no tiene préstamo activo)
@@ -357,13 +393,21 @@ class SolicitudPrestamoController extends Controller
             $q->where('nombre', '!=', 'Devuelto');
         })->exists();
         if ($prestado) {
-            return response()->json(['success' => false, 'message' => 'El equipo ya está prestado.'], 409);
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'El equipo ya está prestado.'], 409);
+            } else {
+                return redirect()->route('solicitud.cart')->with('error', 'El equipo ya está prestado.');
+            }
         }
 
         // Verificar que el lote tenga disponibilidad
         $lote = $equipo->lote;
         if (!$lote || $lote->cantidad_disponible < 1) {
-            return response()->json(['success' => false, 'message' => 'No hay disponibilidad en el lote del equipo.'], 409);
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'No hay disponibilidad en el lote del equipo.'], 409);
+            } else {
+                return redirect()->route('solicitud.cart')->with('error', 'No hay disponibilidad en el lote del equipo.');
+            }
         }
 
         // Obtener el carrito actual
@@ -376,22 +420,39 @@ class SolicitudPrestamoController extends Controller
 
         if ($existingIndex !== false) {
             // Ya está en el carrito
-            return response()->json(['success' => false, 'message' => 'El equipo ya está en el carrito.'], 409);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El equipo ya está en el carrito.',
+                    'cart_count' => count($cart)
+                ], 409);
+            } else {
+                return redirect()->route('solicitud.cart')->with('error', 'El equipo ya está en el carrito.');
+            }
         }
 
-        // Agregar al carrito como cantidad 1
+        // Agregar al carrito como cantidad 1 y guardar equipo_id
         $cart[] = [
             'lote_id' => $lote->id,
             'modelo' => $lote->modelo,
-            'marca' => $lote->marca->nombre,
+            'marca' => $lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : ($lote->marca->nombre ?? 'Sin marca'),
             'categoria' => $lote->categorias->first()->nombre ?? 'Sin categoría',
             'cantidad' => 1,
             'max_disponible' => $lote->cantidad_disponible,
-            'numero_serie' => $equipo->numero_serie
+            'numero_serie' => $equipo->numero_serie,
+            'equipo_id' => $equipo->id
         ];
         session()->put('equipment_cart', $cart);
 
-        return response()->json(['success' => true, 'message' => 'Equipo agregado al carrito correctamente.']);
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Equipo agregado al carrito correctamente.',
+                'cart_count' => count($cart)
+            ]);
+        } else {
+            return redirect()->route('solicitud.cart')->with('success', 'Equipo agregado al carrito correctamente.');
+        }
     }
 
 

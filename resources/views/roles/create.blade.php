@@ -31,9 +31,6 @@
 
 
         <div class="card">
-            <div class="card-header">
-                <p>Nota: Los roles son un conjunto de permisos</p>
-            </div>
             <div class="card-body">
                 <form action="{{ route('roles.store') }}" method="post">
                     @csrf
