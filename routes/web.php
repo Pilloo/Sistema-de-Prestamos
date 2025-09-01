@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/solicitud/create', [SolicitudPrestamoController::class, 'create'])->name('solicitud.create');
     Route::get('/solicitud/cart', [SolicitudPrestamoController::class, 'cart'])->name('solicitud.cart');
     Route::post('/solicitud/add-to-cart', [SolicitudPrestamoController::class, 'addToCart'])->name('solicitud.addToCart');
+        Route::get('/solicitud/add-by-serial', [App\Http\Controllers\SolicitudPrestamoController::class, 'addBySerial'])->name('solicitud.addBySerial');
     Route::delete('/solicitud/remove-from-cart/{index}', [SolicitudPrestamoController::class, 'removeFromCart'])->name('solicitud.removeFromCart');
     Route::patch('/solicitud/update-cart/{index}', [SolicitudPrestamoController::class, 'updateCart'])->name('solicitud.updateCart');
     Route::post('/solicitud/store', [SolicitudPrestamoController::class, 'store'])->name('solicitud.store');
@@ -63,4 +64,5 @@ Route::middleware(['auth'])->group(function () {
     // Aceptar y rechazar solicitud
     Route::post('/solicitudes/{id}/aceptar', [SolicitudPrestamoController::class, 'aceptar'])->name('solicitud.aceptar');
     Route::post('/solicitudes/{id}/rechazar', [SolicitudPrestamoController::class, 'rechazar'])->name('solicitud.rechazar');
+    Route::post('/solicitudes/{id}/devolver', [SolicitudPrestamoController::class, 'devolver'])->name('solicitud.devolver');
 });

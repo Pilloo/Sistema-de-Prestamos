@@ -56,16 +56,11 @@
                                     @method('PATCH')
                                     <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1"
                                            max="{{ $item['max_disponible'] }}" class="form-control form-control-sm rounded-pill">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill">Actualizar</button>
                                 </form>
                             </td>
                             <td>
-                                <form action="{{ route('solicitud.updateCart', $index) }}" method="POST" class="d-flex gap-2">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="date" name="fecha_limite" value="{{ $item['fecha_limite'] }}"
-                                           min="{{ date('Y-m-d') }}" class="form-control form-control-sm rounded-pill">
-                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill">Actualizar</button>
-                                </form>
+                                <!-- La fecha de devolución ahora se especifica para toda la solicitud abajo -->
                             </td>
                             <td>
                                 <form action="{{ route('solicitud.removeFromCart', $index) }}" method="POST">
@@ -100,6 +95,10 @@
                     <label for="detalle" class="form-label fw-semibold">Detalles de Solicitud (Optional)</label>
                     <textarea class="form-control rounded-4" id="detalle" name="detalle" rows="2"
                               placeholder="Detalles adicionales de la solicitud"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="fecha_limite" class="form-label fw-semibold">Fecha de devolución</label>
+                    <input type="date" class="form-control rounded-pill" id="fecha_limite" name="fecha_limite" min="{{ date('Y-m-d') }}" required>
                 </div>
 
                 <div class="d-flex justify-content-between gap-2 flex-wrap">

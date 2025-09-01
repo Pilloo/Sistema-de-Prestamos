@@ -54,6 +54,12 @@
 
 @section('content')
 <div class="container py-4">
+    <div id="scannerErrorMsg" class="alert alert-danger d-none" role="alert"></div>
+        <script>
+            window.Laravel = {
+                csrfToken: '{{ csrf_token() }}'
+            };
+        </script>
     <div class="card border-0 shadow-lg rounded-4 p-4" style="background-color: #f1f1f1ff;">
         <div class="card-body">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
@@ -65,13 +71,6 @@
                     </span>
                 </a>
             </div>
-
-            @can('gestionar solicitudes')
-            <form action="{{ route('solicitud.addToCart') }}" method="POST" class="mb-4">
-                @csrf
-                    <input type="hidden" name="user_id" value="default_user_id"> <!-- Placeholder for user_id -->
-            </form>
-            @endcan
 
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -87,10 +86,48 @@
                 </div>
             @endif
 
-            <div class="d-flex flex-wrap gap-4 justify-content-center">
+            <div class="mb-4 d-flex flex-wrap gap-3 align-items-end justify-content-center">
+                <div class="flex-grow-1">
+                    <label for="scannerInput" class="form-label fw-medium">Escanear código</label>
+                    <input type="text" id="scannerInput" class="form-control" placeholder="Escanea el código de serie o etiqueta...">
+                </div>
+                <div>
+                    <label for="filtroCategoria" class="form-label fw-medium">Categoría</label>
+                    <select id="filtroCategoria" class="form-select">
+                        <option value="">Todas</option>
+                        @php
+                            $categorias = collect($equiposAgrupados)->pluck('categoria')->unique();
+                        @endphp
+                        @foreach($categorias as $cat)
+                            <option value="{{ $cat }}">{{ $cat }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="filtroMarca" class="form-label fw-medium">Marca</label>
+                    <select id="filtroMarca" class="form-select">
+                        <option value="">Todas</option>
+                        @php
+                            $marcas = collect($equiposAgrupados)->pluck('marca')->unique();
+                        @endphp
+                        @foreach($marcas as $marca)
+                            <option value="{{ $marca }}">{{ $marca }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-grow-1">
+                    <label for="buscador" class="form-label fw-medium">Buscar</label>
+                    <input type="text" id="buscador" class="form-control" placeholder="Modelo, etiqueta, etc...">
+                </div>
+            </div>
+            <div class="d-flex flex-wrap gap-4 justify-content-center" id="equiposContainer">
                 @foreach($equiposAgrupados as $grupo)
-                <div class="product-card">
-                    <!-- Mostrar imagen del primer lote del grupo -->
+                <div class="product-card equipo-item"
+                    data-categoria="{{ $grupo['categoria'] }}"
+                    data-marca="{{ $grupo['marca'] }}"
+                    data-modelo="{{ $grupo['modelo'] }}"
+                    data-etiqueta="{{ $grupo['lotes'][0]->contenido_etiqueta ?? '' }}"
+                    data-serial="{{ $grupo['lotes'][0]->serial ?? '' }}">
                     @php $primerLote = $grupo['lotes'][0]; @endphp
                     <img src="{{ asset('img/equipos/' . $primerLote->img_path) }}" 
                          alt="{{ $grupo['modelo'] }}">
@@ -144,10 +181,7 @@
                         <small class="text-muted">Máximo disponible: <span id="maxQuantity">0</span></small>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="dueDateInput" class="form-label fw-medium">Fecha de devolución</label>
-                        <input type="date" class="form-control" id="dueDateInput" name="fecha_limite" min="{{ date('Y-m-d') }}" required>
-                    </div>
+                    <!-- Campo de fecha de devolución eliminado, ahora se especifica en el carrito -->
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
@@ -163,6 +197,34 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Filtro y buscador
+    const equiposContainer = document.getElementById('equiposContainer');
+    const filtroCategoria = document.getElementById('filtroCategoria');
+    const filtroMarca = document.getElementById('filtroMarca');
+    const buscador = document.getElementById('buscador');
+    const scannerInput = document.getElementById('scannerInput');
+
+    function filtrarEquipos() {
+        const categoria = filtroCategoria.value.toLowerCase();
+        const marca = filtroMarca.value.toLowerCase();
+        const busqueda = buscador.value.toLowerCase();
+        equiposContainer.querySelectorAll('.equipo-item').forEach(function(card) {
+            const cat = card.getAttribute('data-categoria').toLowerCase();
+            const mar = card.getAttribute('data-marca').toLowerCase();
+            const modelo = card.getAttribute('data-modelo').toLowerCase();
+            const etiqueta = card.getAttribute('data-etiqueta').toLowerCase();
+            let visible = true;
+            if (categoria && cat !== categoria) visible = false;
+            if (marca && mar !== marca) visible = false;
+            if (busqueda && !(modelo.includes(busqueda) || etiqueta.includes(busqueda))) visible = false;
+            card.style.display = visible ? '' : 'none';
+        });
+    }
+    filtroCategoria.addEventListener('change', filtrarEquipos);
+    filtroMarca.addEventListener('change', filtrarEquipos);
+    buscador.addEventListener('input', filtrarEquipos);
+
+    // Modal lógica original
     const cartModal = document.getElementById('cartModal');
     cartModal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget;
@@ -195,8 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         loteSelect.dispatchEvent(new Event('change'));
 
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('dueDateInput').min = today;
     });
 });
 </script>
