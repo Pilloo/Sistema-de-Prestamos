@@ -28,53 +28,56 @@ Swal.fire({
 <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<div class="container py-5">
-    <div class="panel">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Lotes de Equipos</h2>
-            <a href="{{ route('lotes.create') }}" class="btn btn-agregar">+ Nuevo Lote</a>
-        </div>
+<body>
+    <div class="container py-5">
+        <div class="panel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Lotes de Equipos</h2>
+                <a href="{{ route('lotes.create') }}" class="btn btn-agregar">+ Nuevo Lote</a>
+            </div>
 
-        <div class="table-responsive">
-            <table id="tablaLotes" class="table align-middle ">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Modelo</th>
-                        <th>Marca</th>
-                        <th>Categorías</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($lotes as $lote)
-                    <tr>
-                        <td>{{ $lote->id }}</td>
-                        <td>{{ $lote->modelo }}</td>
-                        <td>
-                            {{ $lote->marca && $lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : 'Sin marca' }}
-                        </td>
-                        <td>
-                            @foreach ($lote->categorias as $categoria)
-                                <span class="badge bg-secondary">{{ $categoria->caracteristica->nombre }}</span>
-                            @endforeach
-                        </td>
-                        <td>
-                            <a href="{{ route('lotes.show', $lote->id) }}" class="btn btn-sm btn-ver">Ver</a>
-                            <a href="{{ route('lotes.edit', $lote->id) }}" class="btn btn-sm btn-editar">Editar</a>
-                            <form action="{{ route('lotes.destroy', $lote->id) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-eliminar" onclick="return confirm('¿Eliminar lote?')">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="tablaLotes" class="table align-middle ">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Modelo</th>
+                            <th>Marca</th>
+                            <th>Categorías</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($lotes as $lote)
+                        <tr>
+                            <td>{{ $lote->id }}</td>
+                            <td>{{ $lote->modelo }}</td>
+                            <td>
+                                {{ $lote->marca && $lote->marca->caracteristica ? $lote->marca->caracteristica->nombre : 'Sin marca' }}
+                            </td>
+                            <td>
+                                @foreach ($lote->categorias as $categoria)
+                                    <span class="badge bg-secondary">{{ $categoria->caracteristica->nombre }}</span>
+                                @endforeach
+                            </td>
+                            <td>
+                                <a href="{{ route('lotes.show', $lote->id) }}" class="btn btn-sm btn-ver">Ver</a>
+                                <a href="{{ route('lotes.edit', $lote->id) }}" class="btn btn-sm btn-editar">Editar</a>
+                                <form action="{{ route('lotes.destroy', $lote->id) }}" method="POST" style="display:inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-eliminar" onclick="return confirm('¿Eliminar lote?')">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
+</body>
+
 @endsection
 
 @push('js')
