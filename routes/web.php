@@ -51,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/solicitud/create', [SolicitudPrestamoController::class, 'create'])->name('solicitud.create');
     Route::get('/solicitud/cart', [SolicitudPrestamoController::class, 'cart'])->name('solicitud.cart');
     Route::post('/solicitud/add-to-cart', [SolicitudPrestamoController::class, 'addToCart'])->name('solicitud.addToCart');
-        Route::get('/solicitud/add-by-serial', [App\Http\Controllers\SolicitudPrestamoController::class, 'addBySerial'])->name('solicitud.addBySerial');
+    Route::get('/solicitud/add-by-serial', [App\Http\Controllers\SolicitudPrestamoController::class, 'addBySerial'])->name('solicitud.addBySerial');
     Route::delete('/solicitud/remove-from-cart/{index}', [SolicitudPrestamoController::class, 'removeFromCart'])->name('solicitud.removeFromCart');
     Route::patch('/solicitud/update-cart/{index}', [SolicitudPrestamoController::class, 'updateCart'])->name('solicitud.updateCart');
     Route::post('/solicitud/store', [SolicitudPrestamoController::class, 'store'])->name('solicitud.store');

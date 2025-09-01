@@ -197,69 +197,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Helper para mostrar mensajes
-    function showScannerMsg(msg, type = 'danger') {
-        const msgDiv = document.getElementById('scannerErrorMsg');
-        msgDiv.textContent = msg;
-        msgDiv.classList.remove('d-none', 'alert-danger', 'alert-success');
-        msgDiv.classList.add('alert-' + type);
-        setTimeout(() => { msgDiv.classList.add('d-none'); }, 3500);
-    }
-
-    // Escaneo de código: etiqueta o serial
-    scannerInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            const code = scannerInput.value.trim();
-            if (!code) return;
-
-            // Buscar si es etiqueta (existe en algún lote)
-            let foundEtiqueta = false;
-            let grupoIndex = -1;
-            const equipos = Array.from(document.querySelectorAll('.equipo-item'));
-            equipos.forEach((card, idx) => {
-                const etiqueta = card.getAttribute('data-etiqueta');
-                if (etiqueta && etiqueta === code) {
-                    foundEtiqueta = true;
-                    grupoIndex = idx;
-                }
-            });
-            if (foundEtiqueta) {
-                // Abrir el modal del grupo correspondiente
-                const card = equipos[grupoIndex];
-                const btn = card.querySelector('.open-modal');
-                if (btn) {
-                    btn.click();
-                    scannerInput.value = '';
-                    showScannerMsg('Etiqueta encontrada. Selecciona el lote y cantidad.', 'success');
-                }
-                return;
-            }
-
-            // Si no es etiqueta, intentar como serial
-            // AJAX al backend
-            fetch("{{ route('solicitud.addBySerial') }}?serial=" + encodeURIComponent(code), {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': window.Laravel.csrfToken
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showScannerMsg(data.message, 'success');
-                    scannerInput.value = '';
-                    // Opcional: recargar el carrito o actualizar el contador
-                    setTimeout(() => { window.location.href = "{{ route('solicitud.cart') }}"; }, 1200);
-                } else {
-                    showScannerMsg(data.message || 'Error al agregar por serial.');
-                }
-            })
-            .catch(() => {
-                showScannerMsg('Error de conexión al buscar el serial.');
-            });
-        }
-    });
     // Filtro y buscador
     const equiposContainer = document.getElementById('equiposContainer');
     const filtroCategoria = document.getElementById('filtroCategoria');
@@ -320,6 +257,61 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         loteSelect.dispatchEvent(new Event('change'));
 
+    });
+
+    // Escaneo robusto: Enter activa búsqueda
+    scannerInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const code = scannerInput.value.trim().toLowerCase();
+            if (!code) return;
+
+            // Buscar si es etiqueta (ignora mayúsculas y espacios)
+            let foundEtiqueta = false;
+            let grupoIndex = -1;
+            const equipos = Array.from(document.querySelectorAll('.equipo-item'));
+            equipos.forEach((card, idx) => {
+                const etiqueta = (card.getAttribute('data-etiqueta') || '').trim().toLowerCase();
+                if (etiqueta && etiqueta === code) {
+                    foundEtiqueta = true;
+                    grupoIndex = idx;
+                }
+            });
+            if (foundEtiqueta) {
+                // Abrir el modal del grupo correspondiente
+                const card = equipos[grupoIndex];
+                const btn = card.querySelector('.open-modal');
+                if (btn) {
+                    btn.click();
+                    scannerInput.value = '';
+                    showScannerMsg('Etiqueta encontrada. Selecciona el lote y cantidad.', 'success');
+                } else {
+                    showScannerMsg('No se puede solicitar este equipo (no disponible).');
+                }
+                return;
+            }
+
+            // Si no es etiqueta, intentar como serial (AJAX al backend)
+            fetch("{{ route('solicitud.addBySerial') }}?serial=" + encodeURIComponent(scannerInput.value.trim()), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': window.Laravel.csrfToken
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showScannerMsg(data.message, 'success');
+                    scannerInput.value = '';
+                    setTimeout(() => { window.location.href = "{{ route('solicitud.cart') }}"; }, 1200);
+                } else {
+                    showScannerMsg(data.message || 'No se encontró equipo con ese serial o no está disponible.');
+                }
+            })
+            .catch(() => {
+                showScannerMsg('Error de conexión al buscar el serial.');
+            });
+        }
     });
 });
 </script>
