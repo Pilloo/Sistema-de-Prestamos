@@ -17,6 +17,7 @@ class EstadoSolicitudSeeder extends Seeder
             'Pendiente',
             'Aprobado',
             'Rechazado',
+            'Devuelto',
         ];
 
         foreach ($estados as $estado) {

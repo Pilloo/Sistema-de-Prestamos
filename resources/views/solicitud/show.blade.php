@@ -97,18 +97,42 @@
                 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
                     <h5 class="fw-bold">Equipos Solicitados</h5>
                     @can('gestionar solicitudes')
-                    @if($solicitud->id_estado_solicitud == 1)
-                    <div>
-                        <form action="{{ route('solicitud.aceptar', $solicitud->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-accept">Aceptar</button>
-                        </form>
-                        <form action="{{ route('solicitud.rechazar', $solicitud->id) }}" method="POST" class="d-inline ms-2">
-                            @csrf
-                            <button type="submit" class="btn btn-reject">Rechazar</button>
-                        </form>
-                    </div>
-                    @endif
+                        @if($solicitud->id_estado_solicitud == 1)
+                        <div>
+                            <form action="{{ route('solicitud.aceptar', $solicitud->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-accept">Aceptar</button>
+                            </form>
+                            <form action="{{ route('solicitud.rechazar', $solicitud->id) }}" method="POST" class="d-inline ms-2">
+                                @csrf
+                                <button type="submit" class="btn btn-reject">Rechazar</button>
+                            </form>
+                        </div>
+                        @elseif($solicitud->id_estado_solicitud == 2)
+                        <div>
+                            <form action="{{ route('solicitud.devolver', $solicitud->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                <div class="mb-2">
+                                    <label class="form-label">Estado de devolución por equipo</label>
+                                    @foreach($solicitud->equipos as $equipo)
+                                        <div class="mb-2">
+                                            <span class="fw-bold">Equipo #{{ $equipo->id }} - {{ $equipo->lote->modelo ?? 'N/A' }}</span>
+                                            <select name="estado_equipo_id[{{ $equipo->id }}]" class="form-select mt-1" required>
+                                                @foreach(\App\Models\EstadoEquipo::all() as $estado)
+                                                    <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="mb-2">
+                                    <label for="comentario_devolucion" class="form-label">Comentario</label>
+                                    <textarea name="comentario_devolucion" id="comentario_devolucion" class="form-control" rows="2" placeholder="Agrega un comentario opcional..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-warning">Devolver préstamo</button>
+                            </form>
+                        </div>
+                        @endif
                     @endcan
                 </div>
 
@@ -121,7 +145,7 @@
                                 <th>Modelo</th>
                                 <th>Marca</th>
                                 <th>Categoría</th>
-                                <th>Estado</th>
+                                <th>Estado Equipo</th>
                             </tr>
                         </thead>
                         <tbody>

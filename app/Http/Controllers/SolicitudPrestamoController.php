@@ -101,7 +101,6 @@ class SolicitudPrestamoController extends Controller
         $validator = Validator::make($request->all(), [
             'lote_id' => 'required|exists:lote_equipos,id',
             'cantidad' => 'required|integer|min:1',
-            'fecha_limite' => 'required|date|after:today'
         ]);
 
         if ($validator->fails()) {
@@ -129,7 +128,6 @@ class SolicitudPrestamoController extends Controller
         if ($existingIndex !== false) {
             // Update existing item
             $cart[$existingIndex]['cantidad'] = $request->cantidad;
-            $cart[$existingIndex]['fecha_limite'] = $request->fecha_limite;
         } else {
             // Add new item
             $cart[] = [
@@ -138,7 +136,6 @@ class SolicitudPrestamoController extends Controller
                 'marca' => $lote->marca->nombre,
                 'categoria' => $lote->categorias->first()->nombre ?? 'Sin categoría',
                 'cantidad' => $request->cantidad,
-                'fecha_limite' => $request->fecha_limite,
                 'max_disponible' => $lote->cantidad_disponible
             ];
         }
@@ -223,13 +220,17 @@ class SolicitudPrestamoController extends Controller
             DB::transaction(function () use ($cart, $request) {
                 // Si el admin seleccionó un usuario, asociar la solicitud a ese usuario
                 $idSolicitante = $request->has('user_id') ? $request->input('user_id') : (Auth::user() ? Auth::user()->id : null);
+                // Buscar el id del estado 'Aprobado'
+                $estadoAprobado = \App\Models\EstadoSolicitud::where('nombre', 'Aprobado')->first();
+                $idEstadoAprobado = $estadoAprobado ? $estadoAprobado->id : 2; // fallback a 2 si existe
+
                 $solicitud = SolicitudPrestamo::create([
                     'id_solicitante' => $idSolicitante,
                     'fecha_solicitud' => now(),
-                    'fecha_limite_solicitada' => $cart[0]['fecha_limite'], // Use first item's due date
+                    'fecha_limite_solicitada' => $request->input('fecha_limite'), // Use first item's due date
                     'detalle' => $request->detalle ?? 'Solicitud de préstamo de equipos',
-                    'id_estado_solicitud' => 1, // pendiente
-                    'id_tecnico_aprobador' => null
+                    'id_estado_solicitud' => $idEstadoAprobado,
+                    'id_tecnico_aprobador' => Auth::user() ? Auth::user()->id : null
                 ]);
 
                 // Process each equipment lot
@@ -238,7 +239,16 @@ class SolicitudPrestamoController extends Controller
 
                     $equipos = $lote->equipos()->whereDoesntHave('prestamos')->limit($item['cantidad'])->get();
                     $solicitud->equipos()->attach($equipos->pluck('id')->toArray());
-                    // NO disminuir cantidad_disponible aquí
+                        // Disminuir la cantidad disponible del lote
+                        $lote->decrement('cantidad_disponible', $item['cantidad']);
+                            // Cambiar estado de los equipos a 'En préstamo'
+                            $estadoEnPrestamo = \App\Models\EstadoEquipo::where('nombre', 'En préstamo')->first();
+                            if ($estadoEnPrestamo) {
+                                foreach ($equipos as $equipo) {
+                                    $equipo->estado_equipo_id = $estadoEnPrestamo->id;
+                                    $equipo->save();
+                                }
+                            }
                 }
             });
 
@@ -252,64 +262,6 @@ class SolicitudPrestamoController extends Controller
             return redirect()->route('solicitud.cart')
                 ->with('error', 'Error al procesar la solicitud: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Aceptar solicitud de préstamo
-     */
-    public function aceptar($id)
-    {
-        $solicitud = SolicitudPrestamo::with(['equipos.lote'])->findOrFail($id);
-
-        if ($solicitud->id_estado_solicitud != 1) {
-            return redirect()->back()->with('error', 'La solicitud ya fue procesada.');
-        }
-
-        DB::transaction(function () use ($solicitud) {
-            // Cambiar estado a aceptada (por ejemplo, 2) y registrar datos de préstamo
-            $solicitud->update([
-                'id_estado_solicitud' => 2, // aceptada
-                'id_tecnico_aprobador' => (Auth::user() ? Auth::user()->id : null),
-                'fecha_entrega' => now(),
-                'estado_prestamo' => 'Prestado / Entregado'
-            ]);
-
-            // Obtener el id del estado "En préstamo"
-            $estadoEnPrestamo = \App\Models\EstadoEquipo::where('nombre', 'En préstamo')->first();
-
-            // Disminuir cantidad disponible de cada lote y cambiar estado de equipo
-            foreach ($solicitud->equipos as $equipo) {
-                $lote = $equipo->lote;
-                if ($lote) {
-                    $lote->decrement('cantidad_disponible', 1);
-                }
-                if ($estadoEnPrestamo) {
-                    $equipo->estado_equipo_id = $estadoEnPrestamo->id;
-                    $equipo->save();
-                }
-            }
-        });
-
-        return redirect()->back()->with('success', 'Solicitud aceptada correctamente.');
-    }
-
-    /**
-     * Rechazar solicitud de préstamo
-     */
-    public function rechazar($id)
-    {
-        $solicitud = SolicitudPrestamo::findOrFail($id);
-
-        if ($solicitud->id_estado_solicitud != 1) {
-            return redirect()->back()->with('error', 'La solicitud ya fue procesada.');
-        }
-
-        $solicitud->update([
-            'id_estado_solicitud' => 3, // rechazada
-            'id_tecnico_aprobador' => (Auth::user() ? Auth::user()->id : null)
-        ]);
-
-        return redirect()->back()->with('success', 'Solicitud rechazada correctamente.');
     }
 
 
@@ -329,25 +281,58 @@ class SolicitudPrestamoController extends Controller
      */
     public function devolver($id)
     {
+        // Solo admin puede devolver
+        if (!\Illuminate\Support\Facades\Gate::allows('gestionar solicitudes')) {
+            return redirect()->back()->with('error', 'No tienes permisos para realizar la devolución.');
+        }
+
         $solicitud = SolicitudPrestamo::with(['equipos.lote'])->findOrFail($id);
 
-        DB::transaction(function () use ($solicitud) {
-            // Obtener el id del estado "En préstamo"
-            $estadoEnPrestamo = \App\Models\EstadoEquipo::where('nombre', 'Disponible')->first();
+        // Solo se puede devolver si está en estado "Prestado / Entregado" (id_estado_solicitud = 2)
+        if ($solicitud->id_estado_solicitud != 2) {
+            return redirect()->back()->with('error', 'La solicitud no está en estado de préstamo activo.');
+        }
 
-            // Disminuir cantidad disponible de cada lote y cambiar estado de equipo
+        $equiposIds = $solicitud->equipos->pluck('id')->toArray();
+        $rules = [
+            'comentario_devolucion' => 'nullable|string|max:255',
+        ];
+        foreach ($equiposIds as $id) {
+            $rules["estado_equipo_id.$id"] = 'required|integer|exists:estado_equipos,id';
+        }
+        request()->validate($rules);
+
+        $estadoEquipoIds = request('estado_equipo_id'); // array: equipo_id => estado_id
+        $comentarioDevolucion = request('comentario_devolucion');
+
+        DB::transaction(function () use ($solicitud, $estadoEquipoIds, $comentarioDevolucion) {
+            // Buscar el id del estado "Devuelto" dinámicamente
+            $estadoDevuelto = \App\Models\EstadoSolicitud::where('nombre', 'Devuelto')->first();
+            $idEstadoDevuelto = $estadoDevuelto ? $estadoDevuelto->id : null;
+
+            $solicitud->update([
+                'id_estado_solicitud' => $idEstadoDevuelto,
+                'fecha_devolucion' => now(),
+                'estado_prestamo' => 'Devuelto',
+                'comentario_devolucion' => $comentarioDevolucion,
+            ]);
+
+            // Aumentar cantidad disponible solo si el estado de devolución es 'Disponible'
             foreach ($solicitud->equipos as $equipo) {
                 $lote = $equipo->lote;
-                if ($lote) {
-                    $lote->increment('cantidad_disponible', 1);
-                }
-                if ($estadoEnPrestamo) {
-                    $equipo->estado_equipo_id = $estadoEnPrestamo->id;
+                if (isset($estadoEquipoIds[$equipo->id])) {
+                    $equipo->estado_equipo_id = $estadoEquipoIds[$equipo->id];
                     $equipo->save();
+                    $estadoEquipo = \App\Models\EstadoEquipo::find($estadoEquipoIds[$equipo->id]);
+                        if ($lote && $estadoEquipo && strtolower($estadoEquipo->nombre) === 'disponible') {
+                            $lote->cantidad_disponible = min($lote->cantidad_disponible + 1, $lote->cantidad_total);
+                            $lote->save();
+                        }
                 }
             }
         });
 
-        return redirect()->back()->with('success', 'Solicitud aceptada correctamente.');
+        return redirect()->back()->with('success', 'Préstamo devuelto correctamente.');
     }
+
 }
