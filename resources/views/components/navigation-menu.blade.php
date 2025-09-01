@@ -1,12 +1,6 @@
 <div class="sidebar">
     
-    <!-- Bienvenida al usuario -->
-    
-    <a class="texto">
-        <i class="fas fa-user-circle"></i>
-        <span class="TextoNav"> {{ auth()->check() ? auth()->user()->name : 'Invitado' }}</span>
-    </a>
-    <br>
+   
 
     <a href="{{ url('/') }}" class="texto">
     <i class="fas fa-home"></i><span class="TextoNav">Home</span>
@@ -21,7 +15,7 @@
     <!-- Solicitudes -->
     @can('ver solicitudes')
     <a href="{{ route('solicitud.index') }}" class="texto">
-        <i class="fa-solid fa-circle-question"></i><span class="TextoNav">Solicitudes</span>
+        <i class="fas fa-clipboard-list"></i><span class="TextoNav">Prestamos</span>
     </a>
     @endcan
 
@@ -32,26 +26,7 @@
     </a>
     @endcan
 
-    <!-- Préstamos -->
-    @can('ver prestamos')
-    <a href="#" class="texto">
-        <i class="fas fa-clipboard-list"></i><span class="TextoNav">Préstamos</span>
-    </a>
-    @endcan
-
-    <!-- Categorías -->
-    @can('ver categorias')
-    <a href="{{ route('categorias.index')}}" class="texto">
-        <i class="fas fa-tags"></i><span class="TextoNav">Categorías</span>
-    </a>
-    @endcan
-
-    <!-- Marcas -->
-    @can('ver marcas')
-    <a href="{{ route('marcas.index')}}" class="texto">
-        <i class="fas fa-trademark"></i><span class="TextoNav">Marcas</span>
-    </a>
-    @endcan
+  
 
     <!-- Equipos -->
     @can('ver equipos')
@@ -101,6 +76,19 @@
         <i class="fas fa-th-large"></i><span class="TextoNav">Secciones</span>
     </a>
     @endcan
+      <!-- Categorías -->
+    @can('ver categorias')
+    <a href="{{ route('categorias.index')}}" class="texto">
+        <i class="fas fa-tags"></i><span class="TextoNav">Categorías</span>
+    </a>
+    @endcan
+       <!-- Marcas -->
+    @can('ver marcas')
+    <a href="{{ route('marcas.index')}}" class="texto">
+        <i class="fas fa-trademark"></i><span class="TextoNav">Marcas</span>
+    </a>
+    @endcan
+    
 
     <br>
     

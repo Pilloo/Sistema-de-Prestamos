@@ -15,9 +15,11 @@ body {
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     padding: 40px;
-    max-width: 1200px; /* más ancho para botones grandes */
+    max-width: 1200px;
     text-align: center;
-    margin: 10vh auto;
+    margin: 0 auto;       /* centra horizontalmente */
+    margin-top: 1vh;      /* más cerca del top */
+    margin-bottom: 4vh;
 }
 
 .grande {
@@ -66,7 +68,7 @@ body {
     margin-top: 5vh;
     align-items: center;
     justify-content: center;
-    margin-bottom: 5vh;
+    margin-bottom: 3vh;
 }
 
 /* Responsive: bajan de fila sin cambiar tamaño */
