@@ -59,7 +59,11 @@
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="mb-0">Solicitud #{{ $solicitud->id }}</h3>
-                    <a href="{{ route('solicitud.index') }}" class="btn btn-secondary btn-back">Volver</a>
+                    @if(auth()->user()->can('gestionar solicitudes'))
+                        <a href="{{ route('solicitud.index') }}" class="btn btn-secondary btn-back">Volver</a>
+                    @else
+                        <a href="{{ route('solicitud.misSolicitudes') }}" class="btn btn-secondary btn-back">Volver</a>
+                    @endif
                 </div>
 
                 <div class="row g-4 mb-4">
@@ -114,20 +118,34 @@
                                 @csrf
                                 <div class="mb-2">
                                     <label class="form-label">Estado de devolución por equipo</label>
-                                    @foreach($solicitud->equipos as $equipo)
-                                        <div class="mb-2">
-                                            <span class="fw-bold">Equipo #{{ $equipo->id }} - {{ $equipo->lote->modelo ?? 'N/A' }}</span>
-                                            <select name="estado_equipo_id[{{ $equipo->id }}]" class="form-select mt-1" required>
-                                                @foreach(\App\Models\EstadoEquipo::all() as $estado)
-                                                    <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Modelo</th>
+                                                    <th>Serial</th>
+                                                    <th>Estado devolución</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($solicitud->equipos as $equipo)
+                                                <tr>
+                                                    <td>{{ $equipo->id }}</td>
+                                                    <td>{{ $equipo->lote->modelo ?? 'N/A' }}</td>
+                                                    <td>{{ $equipo->numero_serie ?? 'N/A' }}</td>
+                                                    <td>
+                                                        <select name="estado_equipo_id[{{ $equipo->id }}]" class="form-select" required>
+                                                            @foreach(\App\Models\EstadoEquipo::all() as $estado)
+                                                                <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
                                                 @endforeach
-                                            </select>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <div class="mb-2">
-                                    <label for="comentario_devolucion" class="form-label">Comentario</label>
-                                    <textarea name="comentario_devolucion" id="comentario_devolucion" class="form-control" rows="2" placeholder="Agrega un comentario opcional..."></textarea>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-warning">Devolver préstamo</button>
                             </form>

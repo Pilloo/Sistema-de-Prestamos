@@ -3,6 +3,8 @@
 @section('title','Lista de usuarios')
 
 @push('css')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 <link href="{{ asset('css/users.css') }}" rel="stylesheet" />
 @endpush
 
@@ -19,7 +21,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table align-middle table-hover">
+                <table id="tablaUsuarios" class="table align-middle table-hover">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -65,6 +67,32 @@
 @endsection
 
 @push('js')
-<!-- FontAwesome -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#tablaUsuarios').DataTable({
+        "scrollY": "400px",
+        "scrollCollapse": true,
+        "paging": true,
+        "language": {
+            "search": "Buscar:",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ usuarios",
+            "paginate": {
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "zeroRecords": "No se encontraron usuarios"
+        },
+        "columnDefs": [
+            { "orderable": false, "targets": 5 }
+        ]
+    });
+});
+</script>
 @endpush
